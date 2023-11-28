@@ -599,7 +599,7 @@ public class battleship{
             }
 
 
-            if(!(aircraftCarrier || battleship || submarine || speedboat))
+            if((aircraftCarrier && battleship && submarine && speedboat))
                 complete = true;
         }
 
@@ -623,6 +623,8 @@ public class battleship{
         int y = 0;
 
         System.out.printf("You've selected to place the Aircraft Carrier!\n");
+        System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+        printShips(ships);
         while(retry)
         {
             while(idiot)
@@ -645,6 +647,8 @@ public class battleship{
             idiot = true;
             while(idiot)
             {
+                System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+                printShips(ships);
                 System.out.printf("Select your Aircraft Carrier's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 switch(rotation){
                     case 0:
@@ -668,6 +672,8 @@ public class battleship{
                         xmax = 9;
                         break;
                 }
+
+                
                 
                 x = kin.nextInt();
 
@@ -732,6 +738,9 @@ public class battleship{
     
         System.out.printf("You've selected to place the Battleship!\n");
 
+        System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+        printShips(ships);
+
         while(retry)
         {
             while(idiot)
@@ -754,6 +763,8 @@ public class battleship{
             idiot = true;
             while(idiot)
             {
+                System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+                printShips(ships);
                 System.out.printf("Select your Battleship's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 if(rotation == 0)
                 {
@@ -818,6 +829,9 @@ public class battleship{
     
         System.out.printf("You've selected to place the Submarine!\n");
 
+        System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+        printShips(ships);
+
         while(retry)
         {
             while(idiot)
@@ -840,6 +854,9 @@ public class battleship{
             idiot = true;
             while(idiot)
             {
+                System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+                printShips(ships);
+
                 System.out.printf("Select your Battleship's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 if(rotation == 0)
                 {
@@ -904,6 +921,9 @@ public class battleship{
     
         System.out.printf("You've selected to place the Speedboat!\n");
 
+        System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+        printShips(ships);
+
         while(retry)
         {
             while(idiot)
@@ -926,6 +946,9 @@ public class battleship{
             idiot = true;
             while(idiot)
             {
+                System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
+                printShips(ships);
+
                 System.out.printf("Select your Speedboat's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 if(rotation == 0)
                 {
@@ -1181,7 +1204,7 @@ public class battleship{
 
     public static void printShips(boolean[][] ships)
     {
-        System.out.printf("Ships:");
+        System.out.printf("Ships:\n");
         
         for(int i = 9; i >= 0; i--)
         {

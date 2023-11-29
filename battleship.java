@@ -7,6 +7,7 @@ public class battleship{
         Scanner kin = new Scanner(System.in);
 
         //startup and option select
+        int startupOption;
         System.out.println("Hello! Welcome to Battleship! Select the options below");
         System.out.printf("Select options 1, 2, or 3:%n\t1) Single Board (For Developer Debugging)%n\t2) Multiplayer%n\t3) Play against AI%n\t4) Watch AI play against eachother\n\t5) quit%n%nSelection: ");
         String optin;
@@ -45,13 +46,11 @@ public class battleship{
                 watchAI();
                 break;
             case 5:
-                kin.close();
                 return;
         }
-        kin.close();
     }
 
-    public static int singleTableRun(){
+    public static void singleTableRun(){
         Scanner kin = new Scanner(System.in);
 
         boolean randomPlacement = false;
@@ -71,6 +70,7 @@ public class battleship{
             ships = shipSelection(ships);
 
         printSingle(ships, sea);
+        boolean quit = false;
         int x = 0;
         int y = 0;
         while(true)
@@ -80,19 +80,13 @@ public class battleship{
             input = kin.nextLine();
             input = input.toLowerCase();
             if(input.charAt(0) == 'q')
-            {
-                kin.close();
-                return 0;
-            }
+                return;
             x = Integer.parseInt(input);
             System.out.printf("y: ");
             input = kin.nextLine();
             input = input.toLowerCase();
             if(input.charAt(0) == 'q')
-            {
-                kin.close();
-                return 0;
-            }
+                return;
             y = Integer.parseInt(input);
 
 
@@ -105,8 +99,6 @@ public class battleship{
                 System.out.printf("Coordinates out of bound!\n");
 
         }
-
-        
     }
 
 
@@ -311,7 +303,6 @@ public class battleship{
         kin.nextLine();
         kin.nextLine();
         kin.nextLine();
-        kin.close();
     }
 
 
@@ -612,7 +603,7 @@ public class battleship{
                 complete = true;
         }
 
-        kin.close();
+
         return ships;
     }
 
@@ -728,7 +719,6 @@ public class battleship{
                 System.out.printf("Oops! Looks like you chose to put your Aircraft Carrier in a place that was already taken by another ship! Try again!\n\n");
 
         }
-        kin.close();
         return ships;
     }
 
@@ -819,7 +809,7 @@ public class battleship{
                 System.out.printf("Oops! Looks like you chose to put your Battleship in a place that was already taken by another ship! Try again!\n\n");
 
         }
-        kin.close();
+
         return ships;
     }
 
@@ -912,7 +902,6 @@ public class battleship{
 
         }
 
-        kin.close();
         return ships;
     }
     
@@ -1005,7 +994,6 @@ public class battleship{
 
         }
 
-        kin.close();
         return ships;
     }
 

@@ -952,7 +952,7 @@ public class battleship{
                 System.out.printf("Select your Speedboat's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 if(rotation == 0)
                 {
-                    System.out.printf("Hxx\n\nSelect x between 0 and 8(inclusive)\nx: ");
+                    System.out.printf("Hx\n\nSelect x between 0 and 8(inclusive)\nx: ");
                     xmin = 0;
                     xmax = 8;
                     ymax = 9;
@@ -984,9 +984,9 @@ public class battleship{
                     idiot = false;
             }
 
-            if(checkSUBplacement(rotation, x, y, ships))
+            if(checkSPDplacement(rotation, x, y, ships))
             {
-                placeSUB(rotation, x, y, ships);
+                placeSPD(rotation, x, y, ships);
                 retry = false;
             }
             else
@@ -1051,7 +1051,7 @@ public class battleship{
         }
         else
         {
-            for(int i = y; i >= y-3; i--)
+            for(int i = y; i < y+4; i++)
                 if(ships[x][i])
                     return false;
         }
@@ -1067,7 +1067,7 @@ public class battleship{
         }
         else
         {
-            for(int i = y; i >= y-2; i--)
+            for(int i = y; i < y + 3; i++)
                 if(ships[x][i])
                     return false;
         }
@@ -1083,7 +1083,7 @@ public class battleship{
         }
         else
         {
-            for(int i = y; i >= y-1; i--)
+            for(int i = y; i < y + 2; i++)
                 if(ships[x][i])
                     return false;
         }
@@ -1134,7 +1134,7 @@ public class battleship{
         }
         else
         {
-            for(int i = y; i >= y-3; i--)
+            for(int i = y; i < y + 4; i++)
                 ships[x][i] = true;
         }
         return ships;
@@ -1149,7 +1149,7 @@ public class battleship{
         }
         else
         {
-            for(int i = y; i >= y-2; i--)
+            for(int i = y; i < + 3; i++)
                 ships[x][i] = true;
         }
         return ships;
@@ -1164,7 +1164,7 @@ public class battleship{
         }
         else
         {
-            for(int i = y; i >= y-1; i--)
+            for(int i = y; i < y + 2; i++)
                 ships[x][i] = true;
         }
         return ships;

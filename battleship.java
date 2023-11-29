@@ -1121,7 +1121,6 @@ public class battleship{
                         ships[x-1][i] = true;
                     break;
             }
-        printShips(ships);
         return ships;
     }
 
@@ -1138,7 +1137,6 @@ public class battleship{
             for(int i = y; i < y + 4; i++)
                 ships[x][i] = true;
         }
-        printShips(ships);
         return ships;
     }
 
@@ -1154,7 +1152,6 @@ public class battleship{
             for(int i = y; i < + 3; i++)
                 ships[x][i] = true;
         }
-        printShips(ships);
         return ships;
     }
 
@@ -1170,7 +1167,6 @@ public class battleship{
             for(int i = y; i < y + 2; i++)
                 ships[x][i] = true;
         }
-        printShips(ships);
         return ships;
     }
 

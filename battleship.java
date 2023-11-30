@@ -123,12 +123,12 @@ public class battleship{
         if(randomPlacement)
         {
             randomShipPlacer(ships1);
-            //printShips(ships1.getGrid());
+            printShips(ships1.getGrid());
         }
         else
         {
             System.out.printf("Begin Ship Selection for Player1!\n");
-            //shipSelection(ships1);
+            shipSelection(ships1);
         }
         System.out.printf("Player1 Ship placement complete.\n");
 
@@ -146,12 +146,12 @@ public class battleship{
         if(randomPlacement)
         {
             randomShipPlacer(ships2);
-           //printShips(ships2.getGrid());
+           printShips(ships2.getGrid());
         }
         else
         {
             System.out.printf("Begin Ship Selection for Player2!\n");
-            //shipSelection(ships2);
+            shipSelection(ships2);
         }
         
 
@@ -314,8 +314,139 @@ public class battleship{
 
 
     public static void playAgainstAI(){
-        System.out.println("Play against AI");
+        System.out.println("You have chosen to play against the AI.");
+        Scanner kin = new Scanner(System.in);
+        boolean randomPlacement = false;
+        String input;
+        System.out.printf("Would you like to choose your ship placement?(y/n) (yes by default)\n\t>: ");
+        input = kin.nextLine();
+        input = input.toLowerCase();
+        if(input.charAt(0) == 'n')
+            randomPlacement = true;
+        shipyard PlayerShips = new shipyard(createNewTable());
+        boolean [][] PlayerSea = createNewTable();
+
+        if(randomPlacement)
+            randomShipPlacer(PlayerShips);
+        else
+            shipSelection(PlayerShips);
+        
+        System.out.printf("Player Ship placement complete.\n");
+        System.out.printf("Now the AI will pick its locations");
+
+        
+        shipyard AIShips = new shipyard(createNewTable());
+        boolean[][] AIsea = createNewTable();
+        randomShipPlacer(AIShips);
+        printShips(AIShips.getGrid());
+
+        //randomly decide who goes first
+        Random rand = new Random();
+        int first;
+        if(rand.nextBoolean())
+            first = 1;
+        else
+            first = 2;
+        System.out.printf("It has been randomly decided that Player%d will go first!\nPlayer%d, when you're ready, press return.\n", first, first);
+        kin.nextLine();
+
+        //print out initial Board
+        System.out.printf("Player1, here is your initial board.\n");
+        printMuliplayer(PlayerShips, PlayerSea, AIShips, AIsea);
+        System.out.printf("Press return to start the game");
+        kin.nextLine();
+        for(int i = 0; i < 50; i++)
+            System.out.println();
+        System.out.printf("-P1-\nACC R: %d\nx: %d\ny: %d\n-P2-\nACC R: %d\nx: %d\ny: %d\n\n", PlayerShips.getAircraftCarrier()[0], PlayerShips.getAircraftCarrier()[1], PlayerShips.getAircraftCarrier()[2], AIShips.getAircraftCarrier()[0], AIShips.getAircraftCarrier()[1], AIShips.getAircraftCarrier()[2]);
+        kin.nextLine();
+        for(int i = 0; i < 50; i++)
+            System.out.println();
+        
+        int x = 0;
+        int y = 0;
+        boolean idiot;
+
+        boolean unfinished = true;
+        while(unfinished)
+        {
+            idiot = true;
+
+            if(first == 1)
+            {
+                System.out.printf("Press return when ready, Player.\n");
+                kin.nextLine();
+
+                printMuliplayer(PlayerShips, PlayerSea, AIShips, AIsea);
+                System.out.printf("Ready to fire! Keep all x and y coordinates between 0 and 9(inclusive)!\n");
+                while(idiot)
+                {
+                    System.out.printf("x: ");
+                    x = kin.nextInt();
+                    System.out.printf("y: ");
+                    y = kin.nextInt();
+
+                    if((x >=0 && x < 10) && (y >= 0 && y < 10))
+                        idiot = false;
+                    else
+                        System.out.printf("\nCoordinate out of bounds! Try again.\n");
+                }
+
+                PlayerSea[x][y] = true;
+                unfinished = checkRemainingShips(PlayerSea, AIShips);
+                if(unfinished)
+                {
+                    if(AIShips.getGrid()[x][y])
+                        System.out.printf("Hit! Press return and then hand over to player 2!");
+                    else
+                        System.out.printf("Miss! Press return and then hand over to player 2!");
+
+                    kin.nextLine();
+                    kin.nextLine();
+                    for(int i = 0; i < 50; i++)
+                        System.out.println();
+                }  
+                first = 2;
+            }
+            else
+            {
+                System.out.printf("The AI is firing. Press return to have the AI shoot.\n");
+                kin.nextLine();
+
+                printMuliplayer(ships2, sea2, ships1, sea1);
+                System.out.printf("Ready to fire! Keep all x and y coordinates between 0 and 9(inclusive)!\n");
+                while(idiot)
+                {
+                    System.out.printf("x: ");
+                    x = kin.nextInt();
+                    System.out.printf("y: ");
+                    y = kin.nextInt();
+
+                    if((x >=0 && x < 10) && (y >= 0 && y < 10))
+                        idiot = false;
+                    else
+                        System.out.printf("\nCoordinate out of bounds! Try again.\n");
+                }
+
+                sea2[x][y] = true;
+                unfinished = checkRemainingShips(sea2, ships1);
+                if(unfinished)
+                {
+                    if(ships1.getGrid()[x][y])
+                        System.out.printf("Hit! Press return and then hand over to player 2!");
+                    else
+                        System.out.printf("Miss! Press return and then hand over to player 2!");
+                        
+                    kin.nextLine();
+                    kin.nextLine();
+                    for(int i = 0; i < 50; i++)
+                        System.out.println();
+                }
+                first = 1;
+            }
+        }
+        
     }
+
 
 
     public static void watchAI(){

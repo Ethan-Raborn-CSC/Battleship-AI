@@ -60,16 +60,16 @@ public class battleship{
         input = input.toLowerCase();
         if(input.charAt(0) == 'n')
             randomPlacement = true;
-        
+        shipyard shipsO = new shipyard(createNewTable());
         boolean [][] sea = createNewTable();
-        boolean [][] ships = createNewTable();
+        //boolean [][] ships = createNewTable();
 
         if(randomPlacement)
-            ships = randomShipPlacer(ships);
+            randomShipPlacer(shipsO);
         else
-            ships = shipSelection(ships);
+            shipSelection(shipsO);
 
-        printSingle(ships, sea);
+        printSingle(shipsO, sea);
         boolean quit = false;
         int x = 0;
         int y = 0;
@@ -93,7 +93,7 @@ public class battleship{
             if((x >= 0 && x <=9) && (y >= 0 && y <= 9))
             {
                 sea[x][y] = true;
-                printSingle(ships, sea);
+                printSingle(shipsO, sea);
             }
             else
                 System.out.printf("Coordinates out of bound!\n");
@@ -118,14 +118,17 @@ public class battleship{
             randomPlacement = true;
         
         boolean [][] sea1 = createNewTable();
-        boolean [][] ships1 = createNewTable();
+        battleship.shipyard ships1 = new shipyard(createNewTable());
 
         if(randomPlacement)
-            ships1 = randomShipPlacer(ships1);
+        {
+            randomShipPlacer(ships1);
+            //printShips(ships1.getGrid());
+        }
         else
         {
             System.out.printf("Begin Ship Selection for Player1!\n");
-            ships1 = shipSelection(ships1);
+            //shipSelection(ships1);
         }
         System.out.printf("Player1 Ship placement complete.\n");
 
@@ -138,14 +141,17 @@ public class battleship{
             randomPlacement = true;
         
         boolean [][] sea2 = createNewTable();
-        boolean [][] ships2 = createNewTable();
+        shipyard ships2 = new shipyard(createNewTable());
 
         if(randomPlacement)
-            ships2 = randomShipPlacer(ships2);
+        {
+            randomShipPlacer(ships2);
+           //printShips(ships2.getGrid());
+        }
         else
         {
             System.out.printf("Begin Ship Selection for Player2!\n");
-            ships2 = shipSelection(ships2);
+            //shipSelection(ships2);
         }
         
 
@@ -171,6 +177,7 @@ public class battleship{
             kin.nextLine();
             printMuliplayer(ships2, sea2, ships1, sea1);
             System.out.printf("Press return when done and hand off to player 1.");
+            System.out.printf("-P1-\nACC R: %d\nx: %d\ny: %d\n-P2-\nACC R: %d\nx: %d\ny: %d\n\n", ships1.getAircraftCarrier()[0], ships1.getAircraftCarrier()[1], ships1.getAircraftCarrier()[2], ships2.getAircraftCarrier()[0], ships2.getAircraftCarrier()[1], ships2.getAircraftCarrier()[2]);
             kin.nextLine();
             for(int i = 0; i < 50; i++)
                 System.out.println();
@@ -227,7 +234,7 @@ public class battleship{
                 unfinished = checkRemainingShips(sea1, ships2);
                 if(unfinished)
                 {
-                    if(ships2[x][y])
+                    if(ships2.getGrid()[x][y])
                         System.out.printf("Hit! Press return and then hand over to player 2!");
                     else
                         System.out.printf("Miss! Press return and then hand over to player 2!");
@@ -268,7 +275,7 @@ public class battleship{
                 unfinished = checkRemainingShips(sea2, ships1);
                 if(unfinished)
                 {
-                    if(ships1[x][y])
+                    if(ships1.getGrid()[x][y])
                         System.out.printf("Hit! Press return and then hand over to player 2!");
                     else
                         System.out.printf("Miss! Press return and then hand over to player 2!");
@@ -317,13 +324,13 @@ public class battleship{
 
     
 
-    public static boolean checkRemainingShips(boolean[][] mysea, boolean[][]theyships)
+    public static boolean checkRemainingShips(boolean[][] mysea, shipyard theyships)
     {
         for(int i = 0; i < 10; i++)
         {
             for(int j = 0; j < 10; j++)
             {
-                if(theyships[i][j])
+                if(theyships.getGrid()[i][j])
                 {
                     if(!mysea[i][j])
                         return true;
@@ -341,13 +348,14 @@ public class battleship{
         for(int i = 0; i < 10; i++)
             for(int j = 0; j < 10; j++)
                 sea[i][j] = false;
-        return sea;
+        return sea.clone();
     }
 
 
 
-    public static boolean[][] randomShipPlacer(boolean[][] ships)
+    public static void randomShipPlacer(shipyard ships)
     {
+        //printSingle(ships, ships.getGrid());
         Random rand = new Random();
 
         
@@ -413,8 +421,8 @@ public class battleship{
             placed = checkACCplacement(rotation, x, y, ships);
         }
             //place AircraftCarrier
-            ships = placeACC(rotation, x, y, ships);
-
+            ships.setGrid(placeACC(rotation, x, y, ships.getGrid()));
+            ships.setAircraftCarrier(rotation, x, y);
 
         //battleship
         placed = false;
@@ -424,7 +432,13 @@ public class battleship{
             //      xxxx
             //
             //rotation above is 0 with axis at leftmost point
-            //rotation++ = clockwise of rotation
+            //rotation is 0 above
+            //      x
+            //      x
+            //      x
+            //      x
+            //
+            //rotation is 1 above with axis at bottom
 
             //choose rotation
             rotation = rand.nextInt(2);
@@ -439,8 +453,8 @@ public class battleship{
             }
             else
             {
-                maxy = 10;
-                miny = 3;
+                maxy = 7;
+                miny = 0;
                 maxx = 10;
                 minx = 0;
             }
@@ -453,16 +467,22 @@ public class battleship{
             placed = checkBATSplacement(rotation, x, y, ships);
         }
             //place battleship
-            ships = placeBATS(rotation, x, y, ships);
+            ships.setGrid(placeBATS(rotation, x, y, ships.getGrid()));
+            ships.setBattleShip(rotation, x, y);
 
         //submarine
         placed = false;
         while(!placed){
             //has shape like:
-            //      xxx
+            //      xxxx
             //
             //rotation above is 0 with axis at leftmost point
-            //rotation++ = clockwise of rotation
+            //rotation is 0 above
+            //      x
+            //      x
+            //      x
+            //
+            //rotation is 1 above with axis at bottom
 
             //choose rotation
             rotation = rand.nextInt(2);
@@ -477,8 +497,8 @@ public class battleship{
             }
             else
             {
-                maxy = 10;
-                miny = 2;
+                maxy = 8;
+                miny = 0;
                 maxx = 10;
                 minx = 0;
             }
@@ -491,17 +511,22 @@ public class battleship{
             placed = checkSUBplacement(rotation, x, y, ships);
         }
             //place submarine
-            ships = placeSUB(rotation, x, y, ships);
+            ships.setGrid(placeSUB(rotation, x, y, ships.getGrid()));
+            ships.setSubMarine(rotation, x, y);
 
         
         //speedboat
         placed = false;
         while(!placed){
             //has shape like:
-            //      xx
+            //      xxxx
             //
             //rotation above is 0 with axis at leftmost point
-            //rotation++ = clockwise of rotation
+            //rotation is 0 above
+            //      x
+            //      x
+            //
+            //rotation is 1 above with axis at bottom
 
             //choose rotation
             rotation = rand.nextInt(2);
@@ -516,8 +541,8 @@ public class battleship{
             }
             else
             {
-                maxy = 10;
-                miny = 1;
+                maxy = 9;
+                miny = 0;
                 maxx = 10;
                 minx = 0;
             }
@@ -529,13 +554,13 @@ public class battleship{
             //check if space is free
             placed = checkSPDplacement(rotation, x, y, ships);
         }
-            //place submarine
-            ships = placeSPD(rotation, x, y, ships);
+            //place speedboat
+            ships.setGrid(placeSPD(rotation, x, y, ships.getGrid()));
+            ships.setSpeedBoat(rotation, x, y);
             
-        return ships;
     }
 
-    public static boolean[][] shipSelection(boolean[][] ships){
+    public static void shipSelection(shipyard ships){
         Scanner kin = new Scanner(System.in);
 
         boolean aircraftCarrier = false;
@@ -581,19 +606,19 @@ public class battleship{
             //place ship based on selection
             switch(selection){
                 case 1:
-                    ships = accSelection(ships);
+                    accSelection(ships);
                     aircraftCarrier = true;
                     break;
                 case 2:
-                    ships = btsSelection(ships);
+                    btsSelection(ships);
                     battleship = true;
                     break;
                 case 3:
-                    ships = subSelection(ships);
+                    subSelection(ships);
                     submarine = true;
                     break;
              case 4:
-                    ships = spdSelection(ships);
+                    spdSelection(ships);
                     speedboat = true;
                     break;
             }
@@ -602,14 +627,11 @@ public class battleship{
             if((aircraftCarrier && battleship && submarine && speedboat))
                 complete = true;
         }
-
-
-        return ships;
     }
 
 
 
-    public static boolean[][] accSelection(boolean[][] ships){
+    public static void accSelection(shipyard ships){
         Scanner kin = new Scanner(System.in);
         boolean idiot = true;
         boolean retry = true;
@@ -624,7 +646,7 @@ public class battleship{
 
         System.out.printf("You've selected to place the Aircraft Carrier!\n");
         System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-        printShips(ships);
+        printShips(ships.getGrid());
         while(retry)
         {
             while(idiot)
@@ -648,7 +670,7 @@ public class battleship{
             while(idiot)
             {
                 System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-                printShips(ships);
+                printShips(ships.getGrid());
                 System.out.printf("Select your Aircraft Carrier's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 switch(rotation){
                     case 0:
@@ -712,17 +734,17 @@ public class battleship{
 
             if(checkACCplacement(rotation, x, y, ships))
             {
-                placeACC(rotation, x, y, ships);
+                ships.setGrid(placeACC(rotation, x, y, ships.getGrid()));
+                ships.setAircraftCarrier(rotation, x, y);
                 retry = false;
             }
             else
                 System.out.printf("Oops! Looks like you chose to put your Aircraft Carrier in a place that was already taken by another ship! Try again!\n\n");
 
         }
-        return ships;
     }
 
-    public static boolean[][] btsSelection(boolean[][] ships){
+    public static void btsSelection(shipyard ships){
         Scanner kin = new Scanner(System.in);
         boolean idiot = true;
         boolean retry = true;
@@ -739,7 +761,7 @@ public class battleship{
         System.out.printf("You've selected to place the Battleship!\n");
 
         System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-        printShips(ships);
+        printShips(ships.getGrid());
 
         while(retry)
         {
@@ -764,7 +786,7 @@ public class battleship{
             while(idiot)
             {
                 System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-                printShips(ships);
+                printShips(ships.getGrid());
                 System.out.printf("Select your Battleship's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 if(rotation == 0)
                 {
@@ -802,7 +824,8 @@ public class battleship{
 
             if(checkBATSplacement(rotation, x, y, ships))
             {
-                placeBATS(rotation, x, y, ships);
+                ships.setGrid(placeBATS(rotation, x, y, ships.getGrid()));
+                ships.setBattleShip(rotation, x, y);
                 retry = false;
             }
             else
@@ -810,10 +833,9 @@ public class battleship{
 
         }
 
-        return ships;
     }
 
-    public static boolean[][] subSelection(boolean[][] ships){
+    public static void subSelection(shipyard ships){
         Scanner kin = new Scanner(System.in);
         boolean idiot = true;
         boolean retry = true;
@@ -830,7 +852,7 @@ public class battleship{
         System.out.printf("You've selected to place the Submarine!\n");
 
         System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-        printShips(ships);
+        printShips(ships.getGrid());
 
         while(retry)
         {
@@ -855,7 +877,7 @@ public class battleship{
             while(idiot)
             {
                 System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-                printShips(ships);
+                printShips(ships.getGrid());
 
                 System.out.printf("Select your Battleship's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 if(rotation == 0)
@@ -894,7 +916,8 @@ public class battleship{
 
             if(checkSUBplacement(rotation, x, y, ships))
             {
-                placeSUB(rotation, x, y, ships);
+                ships.setGrid(placeSUB(rotation, x, y, ships.getGrid()));
+                ships.setSubMarine(rotation, x, y);
                 retry = false;
             }
             else
@@ -902,10 +925,9 @@ public class battleship{
 
         }
 
-        return ships;
     }
     
-    public static boolean[][] spdSelection(boolean[][] ships){
+    public static void spdSelection(shipyard ships){
         Scanner kin = new Scanner(System.in);
         boolean idiot = true;
         boolean retry = true;
@@ -922,7 +944,7 @@ public class battleship{
         System.out.printf("You've selected to place the Speedboat!\n");
 
         System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-        printShips(ships);
+        printShips(ships.getGrid());
 
         while(retry)
         {
@@ -947,7 +969,7 @@ public class battleship{
             while(idiot)
             {
                 System.out.printf("Here's your current ships. Be sure not to try and put one ship on top of another!\n");
-                printShips(ships);
+                printShips(ships.getGrid());
 
                 System.out.printf("Select your Speedboat's position!\nYour ship's position is a coordinate on the grid where the 'H' is depending on your rotation\n");
                 if(rotation == 0)
@@ -960,7 +982,7 @@ public class battleship{
                 }
                 else
                 {
-                    System.out.printf("x\nx\nH\n\nSelect x between 0 and 9(inclusive)\nx: ");
+                    System.out.printf("x\nH\n\nSelect x between 0 and 9(inclusive)\nx: ");
                     xmin = 0;
                     xmax = 9;
                     ymin = 0;
@@ -986,7 +1008,8 @@ public class battleship{
 
             if(checkSPDplacement(rotation, x, y, ships))
             {
-                placeSPD(rotation, x, y, ships);
+                ships.setGrid(placeSPD(rotation, x, y, ships.getGrid()));
+                ships.setSpeedBoat(rotation, x, y);
                 retry = false;
             }
             else
@@ -994,98 +1017,129 @@ public class battleship{
 
         }
 
-        return ships;
     }
 
 
 
 
 
-    public static boolean checkACCplacement(int rotation, int x, int y, boolean [][] ships){
-        //System.out.printf("Check ACC\nRotation: %d\nx: %d\ny: %d\nend check\n", rotation, x, y);
+    public static boolean checkACCplacement(int rotation, int x, int y, shipyard ships){
+        //System.out.printf("ACC\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
         
         
         switch(rotation){
                 case 0:
                     for(int i = x; i < x+3; i++)
-                        if(ships[i][y])
+                    {
+                        if(ships.getGrid()[i][y])
                             return false;
+                    }
                     for(int i = x; i < x+3; i++)
-                        if(ships[i][y+1])
+                    {
+                        if(ships.getGrid()[i][y+1])
                             return false;
+                    }
                     break;
                 case 1:
                     for(int i = y; i >= y-2; i--)
-                        if(ships[x][i])
+                    {
+                        if(ships.getGrid()[x][i])
                             return false;
+                    }
                     for(int i = y; i >= y-1; i--)
-                        if(ships[x+1][i])
+                    {
+                        if(ships.getGrid()[x+1][i])
                             return false;
+                    }
                     break;
                 case 2:
                     for(int i = x; i>=x-2; i--)
-                        if(ships[i][y])
+                    {
+                        if(ships.getGrid()[i][y])
                             return false;
+                    }
                     for(int i = x; i>=x-1; i--)
-                        if(ships[i][y-1])
+                    {
+                        if(ships.getGrid()[i][y-1])
                             return false;
+                    }
                     break;
                 case 3:
                     for(int i = y; i < y+3; i++)
-                        if(ships[x][i])
+                    {
+                        if(ships.getGrid()[x][i])
                             return false;
+                    }
                     for(int i = y; i < y+2; i++)
-                        if(ships[x-1][i])
+                    {
+                        if(ships.getGrid()[x-1][i])
                             return false;
+                    }
                     break;
             }
         return true;
     }
 
-    public static boolean checkBATSplacement(int rotation, int x, int y, boolean[][] ships){
+    public static boolean checkBATSplacement(int rotation, int x, int y, shipyard ships){
+        //System.out.printf("BAT\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
         if(rotation == 0)
         {
             for(int i = x; i < x + 4; i++)
-                if(ships[i][y])
+            {
+                if(ships.getGrid()[i][y])
                     return false;
+            }
         }
         else
         {
             for(int i = y; i < y+4; i++)
-                if(ships[x][i])
+            {
+                if(ships.getGrid()[x][i])
                     return false;
+            }
         }
         return true;
     }
 
-    public static boolean checkSUBplacement(int rotation, int x, int y, boolean [][] ships){
+    public static boolean checkSUBplacement(int rotation, int x, int y, shipyard ships){ 
+        //System.out.printf("SUB\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
         if(rotation == 0)
         {
             for(int i = x; i < x + 3; i++)
-                if(ships[i][y])
+            {
+                if(ships.getGrid()[i][y])
                     return false;
+            }
         }
         else
         {
             for(int i = y; i < y + 3; i++)
-                if(ships[x][i])
+            {
+                if(ships.getGrid()[x][i])
                     return false;
+            }
         }
         return true;
     }
 
-    public static boolean checkSPDplacement(int rotation, int x, int y, boolean [][] ships){
+    public static boolean checkSPDplacement(int rotation, int x, int y, shipyard ships){
+        //System.out.printf("SPD\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
         if(rotation == 0)
         {
             for(int i = x; i < x + 2; i++)
-                if(ships[i][y])
+            {
+                if(ships.getGrid()[i][y])
                     return false;
+            }
         }
         else
         {
             for(int i = y; i < y + 2; i++)
-                if(ships[x][i])
+            {
+                //System.out.println(i);
+                if(ships.getGrid()[x][i])
                     return false;
+            }
         }
         return true;
     }
@@ -1171,7 +1225,7 @@ public class battleship{
     }
 
 
-    public static void printSingle(boolean[][] ships, boolean[][] sea)
+    public static void printSingle(shipyard ships, boolean[][] sea)
     {
         System.out.printf("Ships:\t\t\tSea:\n");
         
@@ -1181,7 +1235,7 @@ public class battleship{
             for(int j = 0; j < 10; j++)
             {
                 System.out.print(" ");
-                if(ships[j][i])
+                if(ships.getGrid()[j][i])
                     System.out.print("X");
                 else
                     System.out.print(" ");
@@ -1224,7 +1278,7 @@ public class battleship{
         System.out.printf("\n\n");
     }
 
-    public static void printMuliplayer(boolean[][] myships, boolean[][] mysea, boolean[][] theyships, boolean[][] theysea)
+    public static void printMuliplayer(shipyard myships, boolean[][] mysea, shipyard theyships, boolean[][] theysea)
     {
         System.out.printf("Ships:\t\t\tSea:\n");
         
@@ -1234,7 +1288,7 @@ public class battleship{
             for(int j = 0; j < 10; j++)
             {
                 System.out.print(" ");
-                if(myships[j][i])
+                if(myships.getGrid()[j][i])
                 {
                     if(theysea[j][i])
                         System.out.print("H");
@@ -1255,7 +1309,7 @@ public class battleship{
                 System.out.print(" ");
                 if(mysea[j][i])
                 {
-                    if(theyships[j][i])
+                    if(theyships.getGrid()[j][i])
                         System.out.print("H");
                     else
                         System.out.print("X");
@@ -1268,5 +1322,84 @@ public class battleship{
         System.out.printf("  0 1 2 3 4 5 6 7 8 9\t  0 1 2 3 4 5 6 7 8 9\n");
 
         System.out.printf("\n\n");
+    }
+
+
+
+
+
+    public static class shipyard
+    {
+        private boolean[][] grid = new boolean[10][10];
+        private int[] acc = new int[3];
+        private int[] bts = new int[3];
+        private int[] sub = new int[3];
+        private int[] spd = new int[3];
+
+
+        public shipyard(boolean[][] newGrid)
+        {
+            grid = newGrid;
+        }
+
+
+        public  void setAircraftCarrier(int rotation, int x, int y)
+        {
+            acc[0] = rotation;
+            acc[1] = x;
+            acc[2] = y;
+        }
+
+        public void setBattleShip(int rotation, int x, int y)
+        {
+            bts[0] = rotation;
+            bts[1] = x;
+            bts[2] = y;
+        }
+
+        public void setSubMarine(int rotation, int x, int y)
+        {
+            sub[0] = rotation;
+            sub[1] = x;
+            sub[2] = y;
+        }
+
+        public void setSpeedBoat(int rotation, int x, int y)
+        {
+            spd[0] = rotation;
+            spd[1] = x;
+            spd[2] = y;
+        }
+
+        public void setGrid(boolean[][] newGrid)
+        {
+            grid = newGrid;
+        }
+
+
+        public int[] getAircraftCarrier()
+        {
+            return acc;
+        }
+
+        public int[] getBattleShip()
+        {
+            return bts;
+        }
+
+        public int[] getSubMarine()
+        {
+            return sub;
+        }
+
+        public int[] getSpeedBoat()
+        {
+            return spd;
+        }
+
+        public boolean[][] getGrid()
+        {
+            return grid;
+        }
     }
 }

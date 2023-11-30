@@ -177,7 +177,7 @@ public class battleship{
             kin.nextLine();
             printMuliplayer(ships2, sea2, ships1, sea1);
             System.out.printf("Press return when done and hand off to player 1.");
-            System.out.printf("-P1-\nACC R: %d\nx: %d\ny: %d\n-P2-\nACC R: %d\nx: %d\ny: %d\n\n", ships1.getAircraftCarrier()[0], ships1.getAircraftCarrier()[1], ships1.getAircraftCarrier()[2], ships2.getAircraftCarrier()[0], ships2.getAircraftCarrier()[1], ships2.getAircraftCarrier()[2]);
+            //System.out.printf("-P1-\nACC R: %d\nx: %d\ny: %d\n-P2-\nACC R: %d\nx: %d\ny: %d\n\n", ships1.getAircraftCarrier()[0], ships1.getAircraftCarrier()[1], ships1.getAircraftCarrier()[2], ships2.getAircraftCarrier()[0], ships2.getAircraftCarrier()[1], ships2.getAircraftCarrier()[2]);
             kin.nextLine();
             for(int i = 0; i < 50; i++)
                 System.out.println();

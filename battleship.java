@@ -119,6 +119,11 @@ public class battleship{
         
         boolean [][] sea1 = createNewTable();
         battleship.shipyard ships1 = new shipyard(createNewTable());
+        boolean acc1, bts1, sub1, spd1;
+        acc1 = true;
+        bts1 = true;
+        sub1 = true;
+        spd1 = true;
 
         if(randomPlacement)
         {
@@ -128,7 +133,7 @@ public class battleship{
         else
         {
             System.out.printf("Begin Ship Selection for Player1!\n");
-            //shipSelection(ships1);
+            shipSelection(ships1);
         }
         System.out.printf("Player1 Ship placement complete.\n");
 
@@ -142,6 +147,11 @@ public class battleship{
         
         boolean [][] sea2 = createNewTable();
         shipyard ships2 = new shipyard(createNewTable());
+        boolean acc2, bts2, sub2, spd2;
+        acc2 = true;
+        bts2 = true;
+        sub2 = true;
+        spd2 = true;
 
         if(randomPlacement)
         {
@@ -151,7 +161,7 @@ public class battleship{
         else
         {
             System.out.printf("Begin Ship Selection for Player2!\n");
-            //shipSelection(ships2);
+            shipSelection(ships2);
         }
         
 
@@ -203,6 +213,7 @@ public class battleship{
 
         int x = 0;
         int y = 0;
+        int[] tester;
         boolean idiot;
 
         boolean unfinished = true;
@@ -235,9 +246,72 @@ public class battleship{
                 if(unfinished)
                 {
                     if(ships2.getGrid()[x][y])
-                        System.out.printf("Hit! Press return and then hand over to player 2!");
+                    {
+                        System.out.printf("Hit!\n");
+                        tester = returnSunken(ships2, sea1);
+                        if(acc1)
+                        {
+                            if(tester[0] == 5)
+                            {
+                                acc1 = false;
+                                System.out.printf("\nYou've sunk the Aircraft Carrier!\n\n xx\n xxx\n\n");
+                            }
+                        }
+                        if(bts1)
+                        {
+                            if(tester[1] == 4)
+                            {
+                                bts1 = false;
+                                System.out.printf("\nYou've sunk the Battleship!\n\n xxxx\n\n");
+                            }
+                        }
+                        if(sub1)
+                        {
+                            if(tester[2] == 3)
+                            {
+                                sub1 = false;
+                                System.out.printf("\nYou've sunk the Submarine!\n\n xxx\n\n");
+                            }
+                        }
+                        if(spd1)
+                        {
+                            if(tester[3] == 2)
+                            {
+                                spd1 = false;
+                                System.out.printf("\nYou've sunk the Speedboat!\n\n xx\n\n");
+                            }
+                        }
+                        
+
+                        
+                        System.out.printf("\nShips left: \n");
+                        if(acc1)
+                            System.out.printf("\tAircraft Carrier\n");
+                        if(bts1)
+                            System.out.printf("\tBattleship\n");
+                        if(sub1)
+                            System.out.printf("\tSubmarine\n");
+                        if(spd1)
+                            System.out.printf("\tSpeedBoat\n");
+                        
+                        
+                        System.out.printf("Press return and then hand over to player 2!");
+                    }
                     else
-                        System.out.printf("Miss! Press return and then hand over to player 2!");
+                    {
+                        System.out.printf("Miss!\n");
+                        System.out.printf("\nShips left: \n");
+                        if(acc1)
+                            System.out.printf("\tAircraft Carrier\n");
+                        if(bts1)
+                            System.out.printf("\tBattleship\n");
+                        if(sub1)
+                            System.out.printf("\tSubmarine\n");
+                        if(spd1)
+                            System.out.printf("\tSpeedBoat\n");
+                        System.out.printf(" Press return and then hand over to player 2!");
+                        
+                    }
 
                     kin.nextLine();
                     kin.nextLine();
@@ -276,9 +350,70 @@ public class battleship{
                 if(unfinished)
                 {
                     if(ships1.getGrid()[x][y])
-                        System.out.printf("Hit! Press return and then hand over to player 2!");
+                    {
+                        System.out.printf("Hit!\n");
+                        tester = returnSunken(ships1, sea2);
+                        if(acc2)
+                        {
+                            if(tester[0] == 5)
+                            {
+                                acc2 = false;
+                                System.out.printf("\nYou've sunk the Aircraft Carrier!\n\n xx\n xxx\n\n");
+                            }
+                        }
+                        if(bts2)
+                        {
+                            if(tester[1] == 4)
+                            {
+                                bts2 = false;
+                                System.out.printf("\nYou've sunk the Battleship!\n\n xxxx\n\n");
+                            }
+                        }
+                        if(sub2)
+                        {
+                            if(tester[2] == 3)
+                            {
+                                sub2 = false;
+                                System.out.printf("\nYou've sunk the Submarine!\n\n xxx\n\n");
+                            }
+                        }
+                        if(spd2)
+                        {
+                            if(tester[3] == 2)
+                            {
+                                spd2 = false;
+                                System.out.printf("\nYou've sunk the Speedboat!\n\n xx\n\n");
+                            }
+                        }
+                        
+                        System.out.printf("\nShips left: \n");
+                        if(acc2)
+                            System.out.printf("\tAircraft Carrier\n");
+                        if(bts2)
+                            System.out.printf("\tBattleship\n");
+                        if(sub2)
+                            System.out.printf("\tSubmarine\n");
+                        if(spd2)
+                            System.out.printf("\tSpeedBoat\n");
+                        
+                        
+                        System.out.printf("Press return and then hand over to player 1!");
+                    }
                     else
-                        System.out.printf("Miss! Press return and then hand over to player 2!");
+                    {
+                        System.out.printf("Miss!\n");
+                        System.out.printf("\nShips left: \n");
+                        if(acc2)
+                            System.out.printf("\tAircraft Carrier\n");
+                        if(bts2)
+                            System.out.printf("\tBattleship\n");
+                        if(sub2)
+                            System.out.printf("\tSubmarine\n");
+                        if(spd2)
+                            System.out.printf("\tSpeedBoat\n");
+                        System.out.printf(" Press return and then hand over to player 1!");
+                        
+                    }
                         
                     kin.nextLine();
                     kin.nextLine();
@@ -324,8 +459,7 @@ public class battleship{
 
     
 
-    public static boolean checkRemainingShips(boolean[][] mysea, shipyard theyships)
-    {
+    public static boolean checkRemainingShips(boolean[][] mysea, shipyard theyships){
         for(int i = 0; i < 10; i++)
         {
             for(int j = 0; j < 10; j++)
@@ -922,7 +1056,8 @@ public class battleship{
             }
             else
                 System.out.printf("Oops! Looks like you chose to put your Submarine in a place that was already taken by another ship! Try again!\n\n");
-
+            
+            printShips(ships.getGrid());
         }
 
     }
@@ -1203,7 +1338,7 @@ public class battleship{
         }
         else
         {
-            for(int i = y; i < + 3; i++)
+            for(int i = y; i < y + 3; i++)
                 ships[x][i] = true;
         }
         return ships;
@@ -1322,6 +1457,140 @@ public class battleship{
         System.out.printf("  0 1 2 3 4 5 6 7 8 9\t  0 1 2 3 4 5 6 7 8 9\n");
 
         System.out.printf("\n\n");
+    }
+
+
+
+
+    public static int[] returnSunken(shipyard myships, boolean[][] theysea)
+    {
+        //System.out.printf("recieved!\n");
+        int x, y;
+        int[] roster = new int[4];
+
+        for(int i = 0; i<4; i++)
+            roster[i] = 0;
+
+        //ACC
+        x = myships.getAircraftCarrier()[1];
+        y = myships.getAircraftCarrier()[2];
+        switch(myships.getAircraftCarrier()[0])
+        {
+            case 0:
+                for(int i = x; i < x + 3; i++)
+                {
+                    if(theysea[i][y])
+                        roster[0]++;
+                }
+                for(int i = x; i < x + 2; i++)
+                {
+                    if(theysea[i][y+1])
+                        roster[0]++;
+                }
+                break;
+            case 1:
+                for(int i = y; i >= y - 2; i--)
+                {
+                    if(theysea[x][i])
+                        roster[0]++;
+                }
+                for(int i = y; i >= y-1; i--)
+                {
+                    if(theysea[x+1][i])
+                        roster[0]++;
+                }
+                break;
+            case 2:
+                for(int i = x; i >= x - 2; i--)
+                {
+                    if(theysea[i][y])
+                        roster[0]++;
+                }
+                for(int i = x; i < x - 1; i--)
+                {
+                    if(theysea[i][y-1])
+                        roster[0]++;
+                }
+                break;
+            case 3:
+                for(int i = y; i < y + 3; i++)
+                {
+                    if(theysea[x][i])
+                        roster[0]++;
+                }
+                for(int i = y; i < y + 2; i++)
+                {
+                    if(theysea[x-1][i])
+                        roster[0]++;
+                }
+                break;
+        }
+
+
+        //BTS
+        x = myships.getBattleShip()[1];
+        y = myships.getBattleShip()[2];
+        if(myships.getBattleShip()[0] == 0)
+        {
+            for(int i = x; i < x + 4; i++)
+            {
+                if(theysea[i][y])
+                    roster[1]++;
+            }
+        }
+        else
+        {
+            for(int i = y; i < y + 4; i++)
+            {
+                if(theysea[x][i])
+                    roster[1]++;
+            }
+        }
+
+
+        //SUB
+        x = myships.getSubMarine()[1];
+        y = myships.getSubMarine()[2];
+        if(myships.getSubMarine()[0] == 0)
+        {
+            for(int i = x; i < x + 3; i++)
+            {
+                if(theysea[i][y])
+                    roster[2]++;
+            }
+        }
+        else
+        {
+            for(int i = y; i < y + 3; i++)
+            {
+                if(theysea[x][i])
+                    roster[2]++;
+            }
+        }
+
+
+        //SPD
+        x = myships.getSpeedBoat()[1];
+        y = myships.getSpeedBoat()[2];
+        if(myships.getSpeedBoat()[0] == 0)
+        {
+            for(int i = x; i < x + 2; i++)
+            {
+                if(theysea[i][y])
+                    roster[3]++;
+            }
+        }
+        else
+        {
+            for(int i = y; i < y + 2; i++)
+            {
+                if(theysea[x][i])
+                    roster[3]++;
+            }
+        }
+
+        //System.out.printf("Return:\n%d\n%d\n%d\n%d\nDone!\n", roster[0], roster[1], roster[2], roster[3]);
+        return roster;
     }
 
 

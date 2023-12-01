@@ -22,6 +22,8 @@ public class battleship{
                 case "4":
                 check = false;                    
                     break;
+                case "5":
+                    return;
                 default:
                     System.out.printf("Did not understand selection. Select again.\n\tSelection:");
                     check = true;
@@ -449,7 +451,51 @@ public class battleship{
 
 
     public static void playAgainstAI(){
-        System.out.println("Play against AI");
+        Scanner kin = new Scanner(System.in);
+
+        //System.out.println("Play against AI");
+        System.out.printf("You've chosen to play against an AI!\nChoose which AI you'd like to play against:\n\t1) Random Ranger\n\t2) Hunt and Target\n\t3) Paridy\n\t4) Heat Map\n\t5) quit\nNote: Higher numbers are typically more effective at playing the game!\n\n\t\tSelection: ");
+
+        String optin;
+        boolean check = false;
+        do{
+            optin = kin.nextLine();
+            
+            switch (optin) {
+                case "1":
+                case "2":
+                case "3":
+                case "4":
+                check = false;                    
+                    break;
+                case "5":
+                    return;
+                default:
+                    System.out.printf("Did not understand selection. Select again.\n\tSelection:");
+                    check = true;
+                    break;
+            }
+        }while(check);
+        
+        int selection = Integer.parseInt(optin);
+        
+        //run game based on selection
+        switch(selection){
+            case 1:
+                playAgainstRR();
+                break;
+            case 2:
+                playAgainstHT();
+                break;
+            case 3:
+                playAgainstPT();
+                break;
+            case 4:
+                playAgainstHM();
+                break;
+            case 5:
+                return;
+        }
     }
 
 
@@ -1462,6 +1508,7 @@ public class battleship{
 
 
 
+
     public static int[] returnSunken(shipyard myships, boolean[][] theysea)
     {
         //System.out.printf("recieved!\n");
@@ -1592,6 +1639,18 @@ public class battleship{
         //System.out.printf("Return:\n%d\n%d\n%d\n%d\nDone!\n", roster[0], roster[1], roster[2], roster[3]);
         return roster;
     }
+
+
+    public static void playAgainstRR(){}
+
+    public static void playAgainstHT(){}
+
+    public static void playAgainstPT(){}
+
+    public static void playAgainstHM(){}
+
+
+
 
 
 

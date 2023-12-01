@@ -4,3 +4,12 @@ Random Ranger
 Hunt and Target
 Paridy
 heat map
+
+
+left at around line 1943
+
+idea is to:
+    randomly select an active hit
+    iterate through all possible ship placements in that hit
+    save options that fit most active hits
+    select cordinate that fits in most of those options

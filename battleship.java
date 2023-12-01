@@ -1641,19 +1641,512 @@ public class battleship{
     }
 
 
-    public static void playAgainstRR(){}
+    public static void playAgainstRR(){
+        System.out.println("Play Against Random Ranger\nNot yet implemented\n");
+    }
 
-    public static void playAgainstHT(){}
+    public static void playAgainstHT(){
+        System.out.println("Play Against Hunt and Target\nNot yet implemented\n");
+    }
 
-    public static void playAgainstPT(){}
+    public static void playAgainstPT(){
+        System.out.println("Play Against Parity\nNot yet implemented\n");
+    }
 
-    public static void playAgainstHM(){}
+    public static void playAgainstHM(){
+        System.out.printf("\nYou've chosen to play against the Heat Map AI!\n\n");
+        Scanner kin = new Scanner(System.in);
+        Random rand = new Random();
+        
+
+        boolean randomPlacement = false;
+        String input;
+        System.out.printf("Would you like to choose your ship placement?(y/n) (yes by default)\n\t>: ");
+        input = kin.nextLine();
+        input = input.toLowerCase();
+        if(input.charAt(0) == 'n')
+            randomPlacement = true;
+        shipyard pships = new shipyard(createNewTable());
+        boolean [][] psea = createNewTable();
+        boolean accp, btsp, subp, spdp;
+        accp = true;
+        btsp = true;
+        subp = true;
+        spdp = true;
+
+        if(randomPlacement)
+            randomShipPlacer(pships);
+        else
+            shipSelection(pships);
+
+        shipyard aships = new shipyard(createNewTable());
+        boolean [][] asea = createNewTable();
+        boolean acaa, btsa, suba, spda;
+        acaa = true;
+        btsa = true;
+        suba = true;
+        spda = true;
+
+        randomShipPlacer(aships);
+
+        //randomly decide who goes first
+        int first;
+        if(rand.nextBoolean())
+            first = 1;
+        else
+            first = 2;
+        
+        if(first == 1)
+            System.out.printf("It has been randomly decided that the player will go first.\nPlayer, press return when you're ready to begin.\n");
+        else
+            System.out.printf("It has been randomly decided that the AI will go first.\nThe AI has alreay gone.\nPlayer, press return when you're ready to begin.\n");
+        
+        if(first == 2)
+        {
+            takeHMTurn(asea, pships, acaa, btsa, suba, spda, false);
+        }
+    }
+
+
+    public static int[] takeHMTurn(boolean[][] aisea, shipyard playerSea, boolean acc, boolean bts, boolean sub, boolean spd, boolean found){
+        int[] chosenCoordinates;
+        if(!found)
+            chosenCoordinates = heatMapLogic(aisea, acc, bts, sub, spd);
+        else
+            chosenCoordinates = foundShip(aisea,  playerSea, acc, bts, sub, spd);
+
+
+    }
+
+    public static int[] heatMapLogic(boolean[][] aisea, boolean acc, boolean bts, boolean sub, boolean spd){
+        Random rand = new Random();
+
+        int[] coords = new int[3];
+        int[][] map = new int[10][10];
+
+        for(int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+                map[i][j] = 0;
+        }
+
+
+        //ACC
+        if(acc)
+        {
+            //rotation 0
+            for(int x = 0; x < 8; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    if(checkMAPACCplacement(0, x, y, aisea))
+                        map = mapACC(0, x, y, map);
+                }
+            }
+
+            //rotation 1
+            for(int x = 0; x < 9; x++)
+            {
+                for(int y = 2; y < 10; y++)
+                {
+                    if(checkMAPACCplacement(1, x, y, aisea))
+                        map = mapACC(0, x, y, map);
+                }
+            }
+
+            //rotation 2
+            for(int x = 2; x < 10; x++)
+            {
+                for(int y = 1; y < 10; y++)
+                {
+                    if(checkMAPACCplacement(2, x, y, aisea))
+                        map = mapACC(2, x, y, map);
+                }
+            }
+
+            //rotation 3
+            for(int x = 1; x < 10; x++)
+            {
+                for(int y = 0; y < 8; y++)
+                {
+                    if(checkMAPACCplacement(3, x, y, aisea))
+                        map = mapACC(3, x, y, map);
+                }
+            }
+        }
+
+        //BTS
+        if(bts)
+        {
+            //rotation 0
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 7; y++)
+                {
+                    if(checkMAPBATSplacement(0, x, y, aisea))
+                        map = mapBAT(0, x, y, map);
+                }
+            }
+            //rotation 1
+            for(int x = 0; x < 7; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPBATSplacement(1, x, y, aisea))
+                        map = mapBAT(1, x, y, map);
+                }
+            }
+        }
+
+        //SUB
+        if(sub)
+        {
+            //rotation 0
+            for(int x = 0; x < 8; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPSUBplacement(0, x, y, aisea))
+                        map = mapSUB(y, x, y, map);
+                }
+            }
+            //rotation 1
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 8; y++)
+                {
+                    if(checkMAPSUBplacement(1, x, y, aisea))
+                        map = mapSUB(1, x, y, map);
+                }
+            }
+        }
+
+        
+        //SPD
+        if(spd)
+        {
+            //rotation 0
+            for(int x = 0; x < 9; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPSPDplacement(0, x, y, aisea))
+                        map = mapSPD(0, x, y, map);
+                }
+            }
+            //rotation 1
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    if(checkMAPSPDplacement(1, x, y, aisea))
+                        map = mapSPD(1, x, y, map);
+                }
+            }
+        }
+
+
+
+
+        int maxvalue = 0;
+        int nummax = -1;
+        int temp;
+        int[] xcs = new int[100];
+        int[] ycs = new int[100];
+
+        for(int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+            {
+                temp = map[i][j];
+                if(temp > maxvalue)
+                {
+                    nummax = 0;
+                    maxvalue = temp;
+                    xcs[nummax] = i;
+                    ycs[nummax] = j;
+                }
+                else if(temp == maxvalue)
+                {
+                    nummax++;
+                    xcs[nummax] = i;
+                    ycs[nummax] = j;
+                }
+            }
+        }
+
+        int selection = rand.nextInt(nummax+1);
+        coords[0] = xcs[selection];
+        coords[1] = ycs[selection];
+        coords[2] = 0;
+
+
+        return coords;
+    }
+
+    public static int[] foundShip(boolean[][] aisea, shipyard playerShips, boolean acc, boolean bts, boolean sub, boolean spd)
+    {
+        int[] coords = new int[3];
+
+        int expectedHits = 0;
+        if(!acc)
+            expectedHits += 5;
+        if(!bts)
+            expectedHits += 4;
+        if(!sub)
+            expectedHits += 3;
+        if(!spd)
+            expectedHits +=2;
+
+        int numHits = 0;
+        boolean[][] pGridCopy = playerShips.getGrid();
+        boolean[][] hits = new boolean[10][10];
+        for(int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+            {
+                if((pGridCopy[i][j]) && aisea[i][j])
+                {
+                    hits[i][j] = true;
+                    numHits++;
+                }
+            }
+        }
+        coords[2] = numHits - expectedHits;
+
+
+        int[] accData = playerShips.getAircraftCarrier();
+        int[] btsData = playerShips.getBattleShip();
+        int[] subData = playerShips.getSubMarine();
+        int[] spdData = playerShips.getSpeedBoat();
+
+
+        boolean[][] sunkShips = new boolean[10][10];
+        if(!acc)
+            sunkShips = placeACC(accData[0], accData[1], accData[2], sunkShips);
+        if(!bts)
+            sunkShips = placeBATS(btsData[0], btsData[1], btsData[2], sunkShips);
+        if(!sub)
+            sunkShips = placeSUB(subData[0], subData[1], subData[2], sunkShips);
+        if(!spd)
+            sunkShips = placeSPD(spdData[0], spdData[1], spdData[2], sunkShips);
+
+
+        boolean[][] activeHits = aisea.clone();
+        for(int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+            {
+                if(sunkShips[i][j])
+                    activeHits[i][j] = false;
+            }
+        }
+        
+        return coords;
+    }
+
+
+    public static int[][] mapACC(int rotation, int x, int y, int[][] map){
+        //System.out.printf("PlACC:\nrotation: %d\nx: %d\ny: %d\nclear\n", rotation, x, y);
+        switch(rotation){
+                case 0:
+                    for(int i = x; i < x+3; i++)
+                        map[i][y]++;
+                    for(int i = x; i < x+2; i++)
+                        map[i][y+1]++;
+                    break;
+                case 1:
+                    for(int i = y; i >= y-2; i--)
+                        map[x][i]++;
+                    for(int i = y; i >= y-1; i--)
+                        map[x+1][i]++;
+                    break;
+                case 2:
+                    for(int i = x; i>=x-2; i--)
+                        map[i][y]++;
+                    for(int i = x; i>=x-1; i--)
+                        map[i][y-1]++;
+                    break;
+                case 3:
+                    for(int i = y; i < y+3; i++)
+                        map[x][i]++;
+                    for(int i = y; i < y+2; i++)
+                        map[x-1][i]++;
+                    break;
+            }
+        return map;
+    }
+
+    public static int[][] mapBAT(int rotation, int x, int y, int[][] map){
+        //System.out.printf("PlBATS:\nrotation: %d\nx: %d\ny: %d\nclear\n", rotation, x, y);
+
+        if(rotation == 0)
+        {
+            for(int i = x; i < x + 4; i++)
+                map[i][y]++;
+        }
+        else
+        {
+            for(int i = y; i < y + 4; i++)
+                map[x][i]++;
+        }
+        return map;
+    }
+
+    public static int[][] mapSUB(int rotation, int x, int y, int[][] map){
+        //System.out.printf("PlSUB:\nrotation: %d\nx: %d\ny: %d\nclear\n", rotation, x, y);
+        if(rotation == 0)
+        {
+            for(int i = x; i < x + 3; i++)
+                map[i][y]++;
+        }
+        else
+        {
+            for(int i = y; i < y + 3; i++)
+                map[x][i]++;
+        }
+        return map;
+    }
+
+    public static int[][] mapSPD(int rotation, int x, int y, int[][] map){
+        //System.out.printf("PlSPD:\nrotation: %d\nx: %d\ny: %d\nclear\n", rotation, x, y);
+        if(rotation == 0)
+        {
+            for(int i = x; i < x + 2; i++)
+                map[i][y]++;
+        }
+        else
+        {
+            for(int i = y; i < y + 2; i++)
+                map[x][i]++;
+        }
+        return map;
+    }
 
 
 
 
 
+    public static boolean checkMAPACCplacement(int rotation, int x, int y, boolean[][] ships){
+        //System.out.printf("ACC\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
+        
+        
+        switch(rotation){
+                case 0:
+                    for(int i = x; i < x+3; i++)
+                    {
+                        if(ships[i][y])
+                            return false;
+                    }
+                    for(int i = x; i < x+3; i++)
+                    {
+                        if(ships[i][y+1])
+                            return false;
+                    }
+                    break;
+                case 1:
+                    for(int i = y; i >= y-2; i--)
+                    {
+                        if(ships[x][i])
+                            return false;
+                    }
+                    for(int i = y; i >= y-1; i--)
+                    {
+                        if(ships[x+1][i])
+                            return false;
+                    }
+                    break;
+                case 2:
+                    for(int i = x; i>=x-2; i--)
+                    {
+                        if(ships[i][y])
+                            return false;
+                    }
+                    for(int i = x; i>=x-1; i--)
+                    {
+                        if(ships[i][y-1])
+                            return false;
+                    }
+                    break;
+                case 3:
+                    for(int i = y; i < y+3; i++)
+                    {
+                        if(ships[x][i])
+                            return false;
+                    }
+                    for(int i = y; i < y+2; i++)
+                    {
+                        if(ships[x-1][i])
+                            return false;
+                    }
+                    break;
+            }
+        return true;
+    }
 
+    public static boolean checkMAPBATSplacement(int rotation, int x, int y, boolean[][] ships){
+        //System.out.printf("BAT\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
+        if(rotation == 0)
+        {
+            for(int i = x; i < x + 4; i++)
+            {
+                if(ships[i][y])
+                    return false;
+            }
+        }
+        else
+        {
+            for(int i = y; i < y+4; i++)
+            {
+                if(ships[x][i])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean checkMAPSUBplacement(int rotation, int x, int y, boolean[][] ships){ 
+        //System.out.printf("SUB\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
+        if(rotation == 0)
+        {
+            for(int i = x; i < x + 3; i++)
+            {
+                if(ships[i][y])
+                    return false;
+            }
+        }
+        else
+        {
+            for(int i = y; i < y + 3; i++)
+            {
+                if(ships[x][i])
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    public static boolean checkMAPSPDplacement(int rotation, int x, int y, boolean[][] ships){
+        //System.out.printf("SPD\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
+        if(rotation == 0)
+        {
+            for(int i = x; i < x + 2; i++)
+            {
+                if(ships[i][y])
+                    return false;
+            }
+        }
+        else
+        {
+            for(int i = y; i < y + 2; i++)
+            {
+                //System.out.println(i);
+                if(ships[x][i])
+                    return false;
+            }
+        }
+        return true;
+    }
 
 
     public static class shipyard

@@ -498,7 +498,7 @@ public class battleship{
         }
     }
 
-
+    
     public static void watchAI(){
         System.out.println("Watch AI");
     }
@@ -1680,12 +1680,13 @@ public class battleship{
             shipSelection(pships);
 
         shipyard aships = new shipyard(createNewTable());
-        boolean [][] asea = createNewTable();
+        //boolean [][] asea = createNewTable();
         boolean acaa, btsa, suba, spda;
         acaa = true;
         btsa = true;
         suba = true;
         spda = true;
+        battleship.HeatMapAI hm = new HeatMapAI();
 
         randomShipPlacer(aships);
 
@@ -1701,188 +1702,224 @@ public class battleship{
         else
             System.out.printf("It has been randomly decided that the AI will go first.\nThe AI has alreay gone.\nPlayer, press return when you're ready to begin.\n");
         
+
+        int[] aicoords;
+        boolean found = false;
         if(first == 2)
         {
-            takeHMTurn(asea, pships, acaa, btsa, suba, spda, false);
+
+            aicoords = HeatMapAI.find(accp, btsa, suba, spda);
+            if(pships.getGrid()[aicoords[0]][aicoords[1]])
+            {
+                found = true;
+                HeatMapAI.setHuntingTrue();
+            }
         }
-    }
 
-
-    public static int[] takeHMTurn(boolean[][] aisea, shipyard playerSea, boolean acc, boolean bts, boolean sub, boolean spd, boolean found){
-        int[] chosenCoordinates;
-        if(!found)
-            chosenCoordinates = heatMapLogic(aisea, acc, bts, sub, spd);
-        else
-            chosenCoordinates = foundShip(aisea,  playerSea, acc, bts, sub, spd);
-
-
-    }
-
-    public static int[] heatMapLogic(boolean[][] aisea, boolean acc, boolean bts, boolean sub, boolean spd){
-        Random rand = new Random();
-
-        int[] coords = new int[3];
-        int[][] map = new int[10][10];
-
-        for(int i = 0; i < 10; i++)
+        boolean unfinished = true;
+        while(unfinished)
         {
-            for(int j = 0; j < 10; j++)
-                map[i][j] = 0;
+            
+            printMuliplayer(pships, psea, aships, HeatMapAI.getSea());
+            System.out.printf("Ready to fire! Keep all x and y coordinates between 0 and 9(inclusive)!\n");
+            boolean idiot = true;
+            int x = -1;
+            int y = -1;
+            int[] tester = new int[4];
+            while(idiot)
+            {
+                System.out.printf("x: ");
+                x = kin.nextInt();
+                System.out.printf("y: ");
+                y = kin.nextInt();
+
+                if((x >=0 && x < 10) && (y >= 0 && y < 10))
+                    idiot = false;
+                else
+                    System.out.printf("\nCoordinate out of bounds! Try again.\n");
+            }
+
+            psea[x][y] = true;
+            unfinished = checkRemainingShips(psea, aships);
+            if(unfinished)
+            {
+                if(aships.getGrid()[x][y])
+                {
+                    System.out.printf("Hit!\n");
+                    tester = returnSunken(aships, psea);
+                    if(accp)
+                    {
+                        if(tester[0] == 5)
+                        {
+                            accp = false;
+                            System.out.printf("\nYou've sunk the Aircraft Carrier!\n\n xx\n xxx\n\n");
+                        }
+                    }
+                    if(btsp)
+                    {
+                        if(tester[1] == 4)
+                        {
+                            btsp = false;
+                            System.out.printf("\nYou've sunk the Battleship!\n\n xxxx\n\n");
+                        }
+                    }
+                    if(subp)
+                    {
+                        if(tester[2] == 3)
+                        {
+                            subp = false;
+                            System.out.printf("\nYou've sunk the Submarine!\n\n xxx\n\n");
+                        }
+                    }
+                    if(spdp)
+                    {
+                        if(tester[3] == 2)
+                        {
+                            spdp = false;
+                            System.out.printf("\nYou've sunk the Speedboat!\n\n xx\n\n");
+                        }
+                    }
+                    
+                    System.out.printf("\nShips left: \n");
+                    if(accp)
+                        System.out.printf("\tAircraft Carrier\n");
+                    if(btsp)
+                        System.out.printf("\tBattleship\n");
+                    if(subp)
+                        System.out.printf("\tSubmarine\n");
+                    if(spdp)
+                        System.out.printf("\tSpeedBoat\n");
+                    
+                    
+                    System.out.printf("Press return to end your turn!");
+                }
+                else
+                {
+                    System.out.printf("Miss!\n");
+                    System.out.printf("\nShips left: \n");
+                    if(accp)
+                        System.out.printf("\tAircraft Carrier\n");
+                    if(btsp)
+                        System.out.printf("\tBattleship\n");
+                    if(subp)
+                        System.out.printf("\tSubmarine\n");
+                    if(spdp)
+                        System.out.printf("\tSpeedBoat\n");
+                    System.out.printf(" Press return to end your turn!");
+                }
+                for(int i = 0; i < 10; i++)
+                    System.out.println();
+            }
+            
+            if(found)
+            {
+                aicoords = HeatMapAI.hunt(acaa, btsa, suba, spda);
+                tester = returnSunken(pships, HeatMapAI.getSea());
+                if(acaa)
+                {
+                    if(tester[0] == 5)
+                    {
+                        acaa = false;
+                        //System.out.printf("\nYou've sunk the Aircraft Carrier!\n\n xx\n xxx\n\n");
+                        if(aicoords[2] == 4)
+                            found = false;
+                    }
+                }
+                if(btsa)
+                {
+                    if(tester[1] == 4)
+                    {
+                        btsp = false;
+                        //System.out.printf("\nYou've sunk the Battleship!\n\n xxxx\n\n");
+                        if(aicoords[2] == 3)
+                            found = false;
+                    }
+                }
+                if(subp)
+                {
+                    if(tester[2] == 3)
+                    {
+                        subp = false;
+                        //System.out.printf("\nYou've sunk the Submarine!\n\n xxx\n\n");
+                        if(aicoords[2] == 1)
+                            found = false;
+                    }
+                }
+                if(spdp)
+                {
+                    if(tester[3] == 2)
+                    {
+                        spdp = false;
+                        //System.out.printf("\nYou've sunk the Speedboat!\n\n xx\n\n");
+                        if(aicoords[2] == 1)
+                            found = false;
+                    }
+                }
+            }
+            else
+            {
+                aicoords = HeatMapAI.find(acaa, btsa, suba, spda);
+                tester = returnSunken(pships, HeatMapAI.getSea());
+                if(acaa)
+                {
+                    if(tester[0] == 5)
+                    {
+                        acaa = false;
+                        //System.out.printf("\nYou've sunk the Aircraft Carrier!\n\n xx\n xxx\n\n");
+                        if(aicoords[2] == 4)
+                            found = false;
+                    }
+                }
+                if(btsa)
+                {
+                    if(tester[1] == 4)
+                    {
+                        btsp = false;
+                        //System.out.printf("\nYou've sunk the Battleship!\n\n xxxx\n\n");
+                        if(aicoords[2] == 3)
+                            found = false;
+                    }
+                }
+                if(subp)
+                {
+                    if(tester[2] == 3)
+                    {
+                        subp = false;
+                        //System.out.printf("\nYou've sunk the Submarine!\n\n xxx\n\n");
+                        if(aicoords[2] == 1)
+                            found = false;
+                    }
+                }
+                if(spdp)
+                {
+                    if(tester[3] == 2)
+                    {
+                        spdp = false;
+                        //System.out.printf("\nYou've sunk the Speedboat!\n\n xx\n\n");
+                        if(aicoords[2] == 1)
+                            found = false;
+                    }
+                }
+            }
         }
-
-
-        //ACC
-        if(acc)
-        {
-            //rotation 0
-            for(int x = 0; x < 8; x++)
-            {
-                for(int y = 0; y < 9; y++)
-                {
-                    if(checkMAPACCplacement(0, x, y, aisea))
-                        map = mapACC(0, x, y, map);
-                }
-            }
-
-            //rotation 1
-            for(int x = 0; x < 9; x++)
-            {
-                for(int y = 2; y < 10; y++)
-                {
-                    if(checkMAPACCplacement(1, x, y, aisea))
-                        map = mapACC(0, x, y, map);
-                }
-            }
-
-            //rotation 2
-            for(int x = 2; x < 10; x++)
-            {
-                for(int y = 1; y < 10; y++)
-                {
-                    if(checkMAPACCplacement(2, x, y, aisea))
-                        map = mapACC(2, x, y, map);
-                }
-            }
-
-            //rotation 3
-            for(int x = 1; x < 10; x++)
-            {
-                for(int y = 0; y < 8; y++)
-                {
-                    if(checkMAPACCplacement(3, x, y, aisea))
-                        map = mapACC(3, x, y, map);
-                }
-            }
-        }
-
-        //BTS
-        if(bts)
-        {
-            //rotation 0
-            for(int x = 0; x < 10; x++)
-            {
-                for(int y = 0; y < 7; y++)
-                {
-                    if(checkMAPBATSplacement(0, x, y, aisea))
-                        map = mapBAT(0, x, y, map);
-                }
-            }
-            //rotation 1
-            for(int x = 0; x < 7; x++)
-            {
-                for(int y = 0; y < 10; y++)
-                {
-                    if(checkMAPBATSplacement(1, x, y, aisea))
-                        map = mapBAT(1, x, y, map);
-                }
-            }
-        }
-
-        //SUB
-        if(sub)
-        {
-            //rotation 0
-            for(int x = 0; x < 8; x++)
-            {
-                for(int y = 0; y < 10; y++)
-                {
-                    if(checkMAPSUBplacement(0, x, y, aisea))
-                        map = mapSUB(y, x, y, map);
-                }
-            }
-            //rotation 1
-            for(int x = 0; x < 10; x++)
-            {
-                for(int y = 0; y < 8; y++)
-                {
-                    if(checkMAPSUBplacement(1, x, y, aisea))
-                        map = mapSUB(1, x, y, map);
-                }
-            }
-        }
+        unfinished = checkRemainingShips(HeatMapAI.getSea(), pships);
 
         
-        //SPD
-        if(spd)
-        {
-            //rotation 0
-            for(int x = 0; x < 9; x++)
-            {
-                for(int y = 0; y < 10; y++)
-                {
-                    if(checkMAPSPDplacement(0, x, y, aisea))
-                        map = mapSPD(0, x, y, map);
-                }
-            }
-            //rotation 1
-            for(int x = 0; x < 10; x++)
-            {
-                for(int y = 0; y < 9; y++)
-                {
-                    if(checkMAPSPDplacement(1, x, y, aisea))
-                        map = mapSPD(1, x, y, map);
-                }
-            }
-        }
-
-
-
-
-        int maxvalue = 0;
-        int nummax = -1;
-        int temp;
-        int[] xcs = new int[100];
-        int[] ycs = new int[100];
-
-        for(int i = 0; i < 10; i++)
-        {
-            for(int j = 0; j < 10; j++)
-            {
-                temp = map[i][j];
-                if(temp > maxvalue)
-                {
-                    nummax = 0;
-                    maxvalue = temp;
-                    xcs[nummax] = i;
-                    ycs[nummax] = j;
-                }
-                else if(temp == maxvalue)
-                {
-                    nummax++;
-                    xcs[nummax] = i;
-                    ycs[nummax] = j;
-                }
-            }
-        }
-
-        int selection = rand.nextInt(nummax+1);
-        coords[0] = xcs[selection];
-        coords[1] = ycs[selection];
-        coords[2] = 0;
-
-
-        return coords;
     }
+    
+
+
+    // public static int[] takeHMTurn(boolean[][] aisea, shipyard playerSea, boolean acc, boolean bts, boolean sub, boolean spd, boolean found){
+    //     int[] chosenCoordinates;
+    //     if(!found)
+    //         chosenCoordinates = heatMapLogic(aisea, acc, bts, sub, spd);
+    //     else
+    //         chosenCoordinates = foundShip(aisea,  playerSea, acc, bts, sub, spd);
+
+
+    // }
+
+    
 
     public static int[] foundShip(boolean[][] aisea, shipyard playerShips, boolean acc, boolean bts, boolean sub, boolean spd)
     {
@@ -2221,6 +2258,1151 @@ public class battleship{
         public boolean[][] getGrid()
         {
             return grid;
+        }
+    }
+
+    public static class HeatMapAI{
+        static int[] acc = new int[3];
+        static int[] bts = new int[3];
+        static int[] sub = new int[3];
+        static int[] spd = new int[3];
+        static boolean hunting = false;
+        static boolean haveSuspiciousHits = false;
+
+        static boolean sHitsACC = false;
+        static int saccnum;
+        static int[] saccx;
+        static int[] saccy;
+        static int[] saccr;
+
+        static boolean sHitsBTS = false;
+        static int sbtsnum;
+        static int[] sbtsx;
+        static int[] sbtsy;
+        static int[] sbtsr;
+
+        static boolean sHitsSUB = false;
+        static int ssubnum;
+        static int[] ssubx;
+        static int[] ssuby;
+        static int[] ssubr;
+
+        static boolean sHitsSPD = false;
+        static int sspdnum;
+        static int[] sspdx;
+        static int[] sspdy;
+        static int[] sspdr;
+
+        static boolean[][] sunkenShips = createNewTable();
+        static boolean[][] activeHits = createNewTable();
+        static boolean[][] suspiciousHits = createNewTable();
+        static boolean[][] misses  = createNewTable();
+        static boolean[][] sea = createNewTable();
+        static boolean[][] lineYErrors = createNewTable();
+        static boolean[][] lineXErrors = createNewTable();
+
+        static int previousX;
+        static int previousY;
+
+        public HeatMapAI(){
+            for(int i= 0; i < 3; i++)
+            {
+                acc[i] = -1;
+                bts[i] = -1;
+                sub[i] = -1;
+                spd[i] = -1;
+            }
+
+
+            previousX = -1;
+            previousY = -1;
+        }
+
+
+        public static int[] find(boolean accb, boolean btsb, boolean subb, boolean spdb)
+        {
+            int[] coords = heatMapLogic(sea, accb, btsb, subb, spdb);
+            previousX = coords[0];
+            previousY = coords[1];
+            sea[previousX][previousY] = true;
+            return coords;
+        }
+
+        private static int[] heatMapLogic(boolean acc, boolean bts, boolean sub, boolean spd){
+        Random rand = new Random();
+
+        int[] coords = new int[3];
+        int[][] map = new int[10][10];
+
+        for(int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+                map[i][j] = 0;
+        }
+
+
+        //ACC
+        if(acc)
+        {
+            //rotation 0
+            for(int x = 0; x < 8; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    if(checkMAPACCplacement(0, x, y, sea))
+                        map = mapACC(0, x, y, map);
+                }
+            }
+
+            //rotation 1
+            for(int x = 0; x < 9; x++)
+            {
+                for(int y = 2; y < 10; y++)
+                {
+                    if(checkMAPACCplacement(1, x, y, sea))
+                        map = mapACC(0, x, y, map);
+                }
+            }
+
+            //rotation 2
+            for(int x = 2; x < 10; x++)
+            {
+                for(int y = 1; y < 10; y++)
+                {
+                    if(checkMAPACCplacement(2, x, y, sea))
+                        map = mapACC(2, x, y, map);
+                }
+            }
+
+            //rotation 3
+            for(int x = 1; x < 10; x++)
+            {
+                for(int y = 0; y < 8; y++)
+                {
+                    if(checkMAPACCplacement(3, x, y, sea))
+                        map = mapACC(3, x, y, map);
+                }
+            }
+
+
+        }
+
+        //BTS
+        if(bts)
+        {
+            //rotation 0
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 7; y++)
+                {
+                    if(checkMAPBATSplacement(0, x, y, sea))
+                        map = mapBAT(0, x, y, map);
+                }
+            }
+            //rotation 1
+            for(int x = 0; x < 7; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPBATSplacement(1, x, y, sea))
+                        map = mapBAT(1, x, y, map);
+                }
+            }
+        }
+
+        //SUB
+        if(sub)
+        {
+            //rotation 0
+            for(int x = 0; x < 8; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPSUBplacement(0, x, y, sea))
+                        map = mapSUB(y, x, y, map);
+                }
+            }
+            //rotation 1
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 8; y++)
+                {
+                    if(checkMAPSUBplacement(1, x, y, sea))
+                        map = mapSUB(1, x, y, map);
+                }
+            }
+        }
+
+        
+        //SPD
+        if(spd)
+        {
+            //rotation 0
+            for(int x = 0; x < 9; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPSPDplacement(0, x, y, sea))
+                        map = mapSPD(0, x, y, map);
+                }
+            }
+            //rotation 1
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    if(checkMAPSPDplacement(1, x, y, sea))
+                        map = mapSPD(1, x, y, map);
+                }
+            }
+        }
+
+
+
+
+        int maxvalue = 0;
+        int nummax = -1;
+        int temp;
+        int[] xcs = new int[100];
+        int[] ycs = new int[100];
+
+        for(int i = 0; i < 10; i++)
+        {
+            for(int j = 0; j < 10; j++)
+            {
+                temp = map[i][j];
+                if(temp > maxvalue)
+                {
+                    nummax = 0;
+                    maxvalue = temp;
+                    xcs[nummax] = i;
+                    ycs[nummax] = j;
+                }
+                else if(temp == maxvalue)
+                {
+                    nummax++;
+                    xcs[nummax] = i;
+                    ycs[nummax] = j;
+                }
+            }
+        }
+
+        int selection = rand.nextInt(nummax+1);
+        coords[0] = xcs[selection];
+        coords[1] = ycs[selection];
+        coords[2] = 0;
+
+
+        return coords;
+    }
+    
+        public static void setHuntingTrue(){
+            hunting = true;
+        }
+
+        public static boolean[][] getSea(){
+            return sea;
+        }
+
+        public static int[] hunt(boolean accb, boolean btsb, boolean subb, boolean spdb){
+            int expectedHits = 0;
+            int hits = 0;
+            int[] coords = new int[3];
+
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(activeHits[x][y])
+                        hits++;
+                }
+            }
+
+            
+            
+            
+            if(!accb)
+            {
+                expectedHits += 5;
+                if(acc[0] == -1)
+                    findACC();
+            }
+            if(!btsb)
+            {
+                expectedHits += 4;
+                if(bts[0] == -1)
+                    findBTS();
+            }
+            if(!subb)
+            {
+                expectedHits += 3;
+                if(sub[0] == -1)
+                    findSUB();
+            }
+            if(!spdb)
+            {
+                expectedHits +=2;
+                if(spd[0] == -1)
+                    findSPD();
+            }
+
+            if(!haveSuspiciousHits)
+            {
+                int[] line = isline();
+                if(line[0] != -1)
+                {
+                    if(line[0] == line[2])
+                    {
+                        //up
+                        if((line[3]+1 < 10) && !sea[line[2]][line[3]+1])
+                        {
+                            coords[0]=line[2];
+                            coords[1]=line[3]+1;
+                            coords[2] = hits - expectedHits;
+                            previousX = coords[0];
+                            previousY = coords[1];
+                            return coords;
+                        }
+                        else if((line[1]-1 >= 0) && !sea[line[0]][line[1]-1])
+                        {
+                            coords[0] = line[0];
+                            coords[1] = line[1] - 1;
+                            coords[2] = hits - expectedHits;
+                            previousX = coords[0];
+                            previousY = coords[1];
+                            return coords;
+                        }
+                        else if(line[0]-1 >= 0)
+                        {
+                            if(!sea[line[0]-1][line[3]])
+                            {
+                                coords[0] = line[0] - 1;
+                                coords[1] = line[3];
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                            else if(!sea[line[0]-1][line[1]])
+                            {
+                                coords[0] = line[0] - 1;
+                                coords[1] = line[1];
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                        }
+                        if(line[0]+1 < 10)
+                        {
+                            if(!sea[line[0]+1][line[3]])
+                            {
+                                coords[0] = line[0] + 1;
+                                coords[1] = line[3];
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                            else if(!sea[line[0]-1][line[1]])
+                            {
+                                coords[0] = line[0] + 1;
+                                coords[1] = line[1];
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                        }
+                        else
+                        {
+                            for(int y = line[1]; y <= line[3]; y++)
+                            {
+                                lineYErrors[line[0]][y] = true;
+                                return hunt(accb, btsb, subb, spdb);
+                            }
+                        }
+
+                    }
+                    else
+                    {
+                        //horizontal
+                        if((line[2]+1 < 10) && !sea[line[2]+1][line[3]])
+                        {
+                            coords[0]=line[2]+1;
+                            coords[1]=line[3];
+                            coords[2] = hits - expectedHits;
+                            previousX = coords[0];
+                            previousY = coords[1];
+                            return coords;
+                        }
+                        else if((line[0]-1 >= 0) && !sea[line[0]-1][line[1]])
+                        {
+                            coords[0] = line[0] - 1;
+                            coords[1] = line[1];
+                            coords[2] = hits - expectedHits;
+                            previousX = coords[0];
+                            previousY = coords[1];
+                            return coords;
+                        }
+                        else if(line[1]-1 >= 0)
+                        {
+                            if(!sea[line[0]][line[3]-1])
+                            {
+                                coords[0] = line[0];
+                                coords[1] = line[3] - 1;
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                            else if(!sea[line[0]][line[1]-1])
+                            {
+                                coords[0] = line[0];
+                                coords[1] = line[1] - 1;
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                        }
+                        if(line[3]+1 < 10)
+                        {
+                            if(!sea[line[0]][line[3]+1])
+                            {
+                                coords[0] = line[0];
+                                coords[1] = line[3] + 1;
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                            else if(!sea[line[0]][line[1]+1])
+                            {
+                                coords[0] = line[0];
+                                coords[1] = line[1] + 1;
+                                coords[2] = hits - expectedHits;
+                                previousX = coords[0];
+                                previousY = coords[1];
+                                return coords;
+                            }
+                        }
+                        else
+                        {
+                            for(int x = line[0]; x <= line[2]; x++)
+                            {
+                                lineXErrors[line[x]][line[1]] = true;
+                                return hunt(accb, btsb, subb, spdb);
+                            }
+                        }
+
+                    }
+
+
+                }
+                else
+                {
+                    int[] rval = searchAroundHit();
+                    coords[0] = rval[0];
+                    coords[1] = rval[1];
+                    coords[2] = hits - expectedHits;
+                    previousX = coords[0];
+                    previousY = coords[1];
+                    return coords;
+
+                }
+            }
+            else
+            {
+                System.out.printf("Help! an ambiguous ship!\n");
+                coords[0] = -1;
+                coords[1] = -1;
+                coords[2] = -1;
+            }
+
+            return coords;
+
+        }
+
+
+        public static int[] searchAroundHit()
+        {
+            int[] values = new int[2];
+            boolean minx = false;
+            boolean miny = false;
+            boolean maxx = false;
+            boolean maxy = false;
+            if(previousX == 0)
+                minx = true;
+            else if(previousX == 9)
+                maxx = true;
+            if(previousY == 0)
+                miny = true;
+            else if(previousY == 9)
+                maxy = true;
+
+            if(!(minx || sea[previousX - 1][previousY]))
+            {
+                values[0] = previousX -1;
+                values[1] = previousY;
+                return values;
+            }
+            else if(!(maxx || sea[previousX + 1][previousY]))
+            {
+                values[0] = previousX +1;
+                values[1] = previousY;
+                return values;
+            }
+            else if(!(maxy || sea[previousX][previousY + 1]))
+            {
+                values[0] = previousX;
+                values[1] = previousY + 1;
+                return values;
+            }
+            else if(!(miny || sea[previousX][previousY - 1]))
+            {
+                values[0] = previousX;
+                values[1] = previousY - 1;
+                
+            }
+            else
+            {
+                System.out.printf("Lone point error\n");
+                values[0] = -1;
+                values[1] = -1;
+            }
+            return values;
+        }
+
+        public static int[] isline()
+        {
+            int coords[] = new int[4];
+            for(int y = 0; y < 10; y++)
+            {
+                for(int x = 0; x < 9; x++)
+                {
+                    if(activeHits[x][y] && !lineXErrors[x][y])
+                    {
+                        if(activeHits[x+1][y])
+                        {
+                            int i = x;
+                            boolean moreline = true;
+                            while(moreline)
+                            {
+                                i++;
+                                if(!(i < 10 && activeHits[i][y]))
+                                    moreline = false;
+                            }
+                            coords[0] = x;
+                            coords[1] = y;
+                            coords[2] = i;
+                            coords[3] = y;
+                            return coords;
+                        }
+                    }
+                }
+            }
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    if(activeHits[x][y] && !lineYErrors[x][y])
+                    {
+                        if(activeHits[x][y+1])
+                        {
+                            int i = y;
+                            boolean moreline = true;
+                            while(moreline)
+                            {
+                                i++;
+                                if(!(i < 10 && activeHits[x][i]))
+                                    moreline = false;
+                            }
+                            coords[0] = x;
+                            coords[1] = y;
+                            coords[2] = x;
+                            coords[3] = i;
+                            return coords;
+                        }
+                    }
+                }
+            }
+
+            coords[0] = -1;
+            coords[1] = -1;
+            coords[2] = -1;
+            coords[3] = -1;
+            
+            return coords;
+        }
+
+
+        public static void findACC()
+        {
+            boolean[][] negativeActiveHits = activeHits.clone();
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(negativeActiveHits[x][y])
+                        negativeActiveHits[x][y] = false;
+                    else
+                        negativeActiveHits[x][y] = true;
+                }
+            }
+
+            int[] xcors = new int[100];
+            int[] ycors = new int[100];
+            int[] rotations = new int[100];
+            int numFound = -1;
+            //rotation 0
+            for(int x = 0; x < 8; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    if(checkMAPACCplacement(0, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 0;
+                    }
+                }
+            }
+            //rotation 1
+            for(int x = 0; x < 9; x++)
+            {
+                for(int y = 2; y < 10; y++)
+                {
+                    if(checkMAPACCplacement(1, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 1;
+                    }
+                }
+            }
+            //rotation 2
+            for(int x = 2; x < 10; x++)
+            {
+                for(int y = 1; y < 10; y++)
+                {
+                    if(checkMAPACCplacement(2, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 2;
+                    }
+                }
+            }
+            //rotation 3
+            for(int x = 1; x < 10; x++)
+            {
+                for(int y = 0; y < 8; y++)
+                {
+                    if(checkMAPACCplacement(3, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 3;
+                    }
+                }
+            }
+
+            int temp = -1;
+            int[] arot = new int[100];
+            int[] ax = new int[100];
+            int[] ay = new int[100];
+            for(int i = 0; i <= numFound; i++)
+            {
+                switch(rotations[i])
+                {
+                    case 0:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        for(int j = 0; j < 2; j++)
+                        {
+                            if(xcors[i]+j == previousX && ycors[i]+1 == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                    case 1:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i] == previousX && ycors[i]-j == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        for(int j = 0; j < 2; j++)
+                        {
+                            if(xcors[i]+1 == previousX && ycors[i]-j == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                    case 2:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i]-j == previousX && ycors[i] == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        for(int j = 0; j < 2; j++)
+                        {
+                            if(xcors[i]-j == previousX && ycors[i]-1 == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                    case 3:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        for(int j = 0; j < 2; j++)
+                        {
+                            if(xcors[i]-1 == previousX && ycors[i]+j == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+
+                }
+            }
+
+            if(temp > 0)
+            {
+                
+
+                
+
+
+
+                haveSuspiciousHits = true;
+                sHitsACC = true;
+                saccnum = numFound;
+                saccx = ax;
+                saccy = ay;
+                saccr = arot;
+            }
+            else
+            {
+                acc[0] = arot[0];
+                acc[1] = ax[0];
+                acc[2] = ay[0];
+                negativeActiveHits = placeACC(arot[0], ax[0], ay[0], negativeActiveHits);
+
+                for(int x = 0; x < 10; x++)
+                {
+                    for(int y = 0; y < 10; y++)
+                    {
+                        if(negativeActiveHits[x][y])
+                            negativeActiveHits[x][y] = false;
+                        else
+                            negativeActiveHits[x][y] = true;
+                    }
+                }
+
+                activeHits = negativeActiveHits.clone();
+            }
+        }
+
+        public static void findBTS(){
+            boolean[][] negativeActiveHits = activeHits.clone();
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(negativeActiveHits[x][y])
+                        negativeActiveHits[x][y] = false;
+                    else
+                        negativeActiveHits[x][y] = true;
+                }
+            }
+
+            int[] xcors = new int[100];
+            int[] ycors = new int[100];
+            int[] rotations = new int[100];
+            int numFound = -1;
+
+            //rotation 0
+            for(int x = 0; x < 7; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPBATSplacement(0, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 0;
+                    }
+                }
+
+            }
+            //rotation 1
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 7; y++)
+                {
+                    if(checkMAPBATSplacement(1, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 1;
+                    }
+                }
+            }
+
+            int temp = -1;
+            int[] arot = new int[100];
+            int[] ax = new int[100];
+            int[] ay = new int[100];
+            for(int i = 0; i <= numFound; i++)
+            {
+                switch(rotations[i])
+                {
+                    case 0:
+                        for(int j = 0; j < 4; j++)
+                        {
+                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                    case 1:
+                        for(int j = 0; j < 4; j++)
+                        {
+                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                }
+            }
+
+            if(temp > 0)
+            {
+                haveSuspiciousHits = true;
+                sHitsBTS = true;
+                sbtsnum = temp;
+                sbtsx = ax;
+                sbtsy = ay;
+                sbtsr = arot;
+            }
+            else
+            {
+                bts[0] = arot[0];
+                bts[1] = ax[0];
+                bts[2] = ay[0];
+                negativeActiveHits = placeBATS(arot[0], ax[0], ay[0], negativeActiveHits);
+
+                for(int x = 0; x < 10; x++)
+                {
+                    for(int y = 0; y < 10; y++)
+                    {
+                        if(negativeActiveHits[x][y])
+                            negativeActiveHits[x][y] = false;
+                        else
+                            negativeActiveHits[x][y] = true;
+                    }
+                }
+
+                activeHits = negativeActiveHits;
+            }
+        }
+
+        public static void findSUB(){
+            boolean[][] negativeActiveHits = activeHits.clone();
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(negativeActiveHits[x][y])
+                        negativeActiveHits[x][y] = false;
+                    else
+                        negativeActiveHits[x][y] = true;
+                }
+            }
+
+            int[] xcors = new int[100];
+            int[] ycors = new int[100];
+            int[] rotations = new int[100];
+            int numFound = -1;
+
+            //rotation 0
+            for(int x = 0; x < 8; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPSUBplacement(0, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 0;
+                    }
+                }
+
+            }
+            //rotation 1
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 8; y++)
+                {
+                    if(checkMAPSUBplacement(1, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 1;
+                    }
+                }
+            }
+
+            int temp = -1;
+            int[] arot = new int[100];
+            int[] ax = new int[100];
+            int[] ay = new int[100];
+            for(int i = 0; i <= numFound; i++)
+            {
+                switch(rotations[i])
+                {
+                    case 0:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                    case 1:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                }
+            }
+
+            if(numFound > 0)
+            {
+                haveSuspiciousHits = true;
+                sHitsSUB = true;
+                ssubnum = numFound;
+                ssubx = ax;
+                ssuby = ay;
+                ssubr = arot;
+            }
+            else
+            {
+                sub[0] = arot[0];
+                sub[1] = ax[0];
+                sub[2] = ay[0];
+                negativeActiveHits = placeSUB(arot[0], ax[0], ay[0], negativeActiveHits);
+
+                for(int x = 0; x < 10; x++)
+                {
+                    for(int y = 0; y < 10; y++)
+                    {
+                        if(negativeActiveHits[x][y])
+                            negativeActiveHits[x][y] = false;
+                        else
+                            negativeActiveHits[x][y] = true;
+                    }
+                }
+
+                activeHits = negativeActiveHits;
+            }
+        }
+
+        public static void findSPD(){
+            boolean[][] negativeActiveHits = activeHits.clone();
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(negativeActiveHits[x][y])
+                        negativeActiveHits[x][y] = false;
+                    else
+                        negativeActiveHits[x][y] = true;
+                }
+            }
+
+            int[] xcors = new int[100];
+            int[] ycors = new int[100];
+            int[] rotations = new int[100];
+            int numFound = -1;
+
+            //rotation 0
+            for(int x = 0; x < 9; x++)
+            {
+                for(int y = 0; y < 10; y++)
+                {
+                    if(checkMAPSPDplacement(0, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 0;
+                    }
+                }
+
+            }
+            //rotation 1
+            for(int x = 0; x < 10; x++)
+            {
+                for(int y = 0; y < 9; y++)
+                {
+                    if(checkMAPSPDplacement(1, x, y, negativeActiveHits))
+                    {
+                        numFound++;
+                        xcors[numFound] = x;
+                        ycors[numFound] = y;
+                        rotations[numFound] = 1;
+                    }
+                }
+            }
+
+            int temp = -1;
+            int[] arot = new int[100];
+            int[] ax = new int[100];
+            int[] ay = new int[100];
+            for(int i = 0; i <= numFound; i++)
+            {
+                switch(rotations[i])
+                {
+                    case 0:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                    case 1:
+                        for(int j = 0; j < 3; j++)
+                        {
+                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            {
+                                temp++;
+                                arot[temp] = rotations[i];
+                                ax[temp] = xcors[i];
+                                ay[temp] = ycors[i];
+                                break;
+                            }
+                        }
+                        break;
+                }
+            }
+
+            if(numFound > 0)
+            {
+                haveSuspiciousHits = true;
+                sHitsSPD = true;
+                sspdnum = numFound;
+                sspdx = ax;
+                sspdy = ay;
+                sspdr = arot;
+            }
+            else
+            {
+                spd[0] = arot[0];
+                spd[1] = ax[0];
+                spd[2] = ay[0];
+                negativeActiveHits = placeSPD(arot[0], ax[0], ay[0], negativeActiveHits);
+
+                for(int x = 0; x < 10; x++)
+                {
+                    for(int y = 0; y < 10; y++)
+                    {
+                        if(negativeActiveHits[x][y])
+                            negativeActiveHits[x][y] = false;
+                        else
+                            negativeActiveHits[x][y] = true;
+                    }
+                }
+
+                activeHits = negativeActiveHits;
+            }
         }
     }
 }

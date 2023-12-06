@@ -1710,10 +1710,16 @@ public class battleship{
 
             aicoords = HeatMapAI.find(accp, btsa, suba, spda);
             if(pships.getGrid()[aicoords[0]][aicoords[1]])
-            {
-                found = true;
-                HeatMapAI.setHuntingTrue();
-            }
+                {
+                    found = true;
+                    System.out.println("Found True!\n");
+                    HeatMapAI.setHuntingTrue();
+                    HeatMapAI.activeHits[aicoords[0]][aicoords[1]] = true;
+                    HeatMapAI.previousHX = aicoords[0];
+                    HeatMapAI.previousHY = aicoords[1];
+                }
+                else
+                    HeatMapAI.misses[aicoords[0]][aicoords[1]] = true;
         }
 
         boolean unfinished = true;
@@ -1816,7 +1822,16 @@ public class battleship{
             
             if(found && unfinished)
             {
-                aicoords = HeatMapAI.hunt(acaa, btsa, suba, spda);
+                aicoords = HeatMapAI.huntFunc(acaa, btsa, suba, spda);
+                System.out.printf("HX: %d\nHY %d\nHL: %d\n", aicoords[0], aicoords[1], aicoords[2]);
+                if(pships.getGrid()[aicoords[0]][aicoords[1]])
+                {
+                    HeatMapAI.activeHits[aicoords[0]][aicoords[1]] = true;
+                    HeatMapAI.previousHX = aicoords[0];
+                    HeatMapAI.previousHY = aicoords[1];
+                }
+                else
+                    HeatMapAI.misses[aicoords[0]][aicoords[1]] = true;
                 tester = returnSunken(pships, HeatMapAI.getSea());
                 if(acaa)
                 {
@@ -1824,6 +1839,7 @@ public class battleship{
                     {
                         acaa = false;
                         //System.out.printf("\nYou've sunk the Aircraft Carrier!\n\n xx\n xxx\n\n");
+                        System.out.printf("The AI sunk the Aircraft Carrier!\n");
                         if(aicoords[2] == 4)
                             found = false;
                     }
@@ -1832,28 +1848,31 @@ public class battleship{
                 {
                     if(tester[1] == 4)
                     {
-                        btsp = false;
+                        btsa = false;
                         //System.out.printf("\nYou've sunk the Battleship!\n\n xxxx\n\n");
+                        System.out.printf("The AI sunk the Battleship!\n");
                         if(aicoords[2] == 3)
                             found = false;
                     }
                 }
-                if(subp)
+                if(suba)
                 {
                     if(tester[2] == 3)
                     {
-                        subp = false;
+                        suba = false;
                         //System.out.printf("\nYou've sunk the Submarine!\n\n xxx\n\n");
+                        System.out.printf("The AI sunk the Submarine!\n");
                         if(aicoords[2] == 1)
                             found = false;
                     }
                 }
-                if(spdp)
+                if(spda)
                 {
                     if(tester[3] == 2)
                     {
-                        spdp = false;
+                        spda = false;
                         //System.out.printf("\nYou've sunk the Speedboat!\n\n xx\n\n");
+                        System.out.printf("The AI sunk the Speedboat!\n");
                         if(aicoords[2] == 1)
                             found = false;
                     }
@@ -1864,6 +1883,17 @@ public class battleship{
             else if(unfinished)
             {
                 aicoords = HeatMapAI.find(acaa, btsa, suba, spda);
+                System.out.printf("AX: %d\nAY: %d\n", aicoords[0], aicoords[1]);
+                if(pships.getGrid()[aicoords[0]][aicoords[1]])
+                {
+                    found = true;
+                    System.out.println("Found True!\n");
+                    HeatMapAI.activeHits[aicoords[0]][aicoords[1]] = true;
+                    HeatMapAI.previousHX = aicoords[0];
+                    HeatMapAI.previousHY = aicoords[1];
+                }
+                else
+                    HeatMapAI.misses[aicoords[0]][aicoords[1]] = true;
                 tester = returnSunken(pships, HeatMapAI.getSea());
                 if(acaa)
                 {
@@ -1871,6 +1901,7 @@ public class battleship{
                     {
                         acaa = false;
                         //System.out.printf("\nYou've sunk the Aircraft Carrier!\n\n xx\n xxx\n\n");
+                        System.out.printf("The AI sunk the Aircraft Carrier!\n");
                         if(aicoords[2] == 4)
                             found = false;
                     }
@@ -1881,33 +1912,58 @@ public class battleship{
                     {
                         btsp = false;
                         //System.out.printf("\nYou've sunk the Battleship!\n\n xxxx\n\n");
+                        System.out.printf("The AI sunk the Battleship!\n");
                         if(aicoords[2] == 3)
                             found = false;
                     }
                 }
-                if(subp)
+                if(suba)
                 {
                     if(tester[2] == 3)
                     {
-                        subp = false;
+                        suba = false;
                         //System.out.printf("\nYou've sunk the Submarine!\n\n xxx\n\n");
+                        System.out.printf("The AI sunk the Submarine!\n");
                         if(aicoords[2] == 1)
                             found = false;
                     }
                 }
-                if(spdp)
+                if(spda)
                 {
                     if(tester[3] == 2)
                     {
-                        spdp = false;
+                        spda = false;
                         //System.out.printf("\nYou've sunk the Speedboat!\n\n xx\n\n");
+                        System.out.printf("The AI sunk the Speedboat!\n");
                         if(aicoords[2] == 1)
                             found = false;
                     }
              
                 }
                 unfinished = checkRemainingShips(HeatMapAI.getSea(), pships);
+                if(found)
+                    System.out.println("Still Found!");
+
+                
+                
             }
+            if(acaa)
+                System.out.println("ACAA");
+            if(btsa)
+                System.out.println("BTSA");
+            if(suba)
+                System.out.println("SUBA");
+            if(spda)
+                System.out.println("SPDA");
+            System.out.println();
+            if(accp)
+                System.out.println("ACCP");
+            if(btsp)
+                System.out.println("BTSP");
+            if(subp)
+                System.out.println("SUBP");
+            if(spdp)
+                System.out.println("SPDP");
             
         }
         
@@ -2315,6 +2371,8 @@ public class battleship{
 
         static int previousX;
         static int previousY;
+        static int previousHX;
+        static int previousHY;
 
         public HeatMapAI(){
             for(int i= 0; i < 3; i++)
@@ -2328,6 +2386,8 @@ public class battleship{
 
             previousX = -1;
             previousY = -1;
+            previousHX = -1;
+            previousHY = -1;
         }
 
 
@@ -2516,6 +2576,16 @@ public class battleship{
             return sea;
         }
 
+        public static int[] huntFunc(boolean accb, boolean btsb, boolean subb, boolean spdb)
+        {
+            int[] coords = new int[3];
+            coords = hunt(accb, btsb, subb, spdb);
+            sea[coords[0]][coords[1]] = true;
+            previousX = coords[0];
+            previousY = coords[1];
+            return coords;
+        }
+
         public static int[] hunt(boolean accb, boolean btsb, boolean subb, boolean spdb){
             int expectedHits = 0;
             int hits = 0;
@@ -2535,27 +2605,35 @@ public class battleship{
             
             if(!accb)
             {
-                expectedHits += 5;
+                
                 if(acc[0] == -1)
                     findACC();
+                else
+                    expectedHits += 5;
             }
             if(!btsb)
             {
-                expectedHits += 4;
+                
                 if(bts[0] == -1)
                     findBTS();
+                else
+                    expectedHits += 4;
             }
             if(!subb)
             {
-                expectedHits += 3;
+                
                 if(sub[0] == -1)
                     findSUB();
+                else
+                    expectedHits += 3;
             }
             if(!spdb)
             {
-                expectedHits +=2;
+                
                 if(spd[0] == -1)
                     findSPD();
+                else
+                    expectedHits +=2;
             }
 
             if(!haveSuspiciousHits)
@@ -2563,6 +2641,8 @@ public class battleship{
                 int[] line = isline();
                 if(line[0] != -1)
                 {
+                    System.out.println("We have a line!");
+                    System.out.printf("1X: %d\n1Y: %d\n2X: %d\n2Y: %d\n", line[0], line[1], line[2], line[3]);
                     if(line[0] == line[2])
                     {
                         //up
@@ -2573,6 +2653,8 @@ public class battleship{
                             coords[2] = hits - expectedHits;
                             previousX = coords[0];
                             previousY = coords[1];
+                            sea[coords[0]][coords[1]] = true;
+                            System.out.println("Try UP!"); 
                             return coords;
                         }
                         else if((line[1]-1 >= 0) && !sea[line[0]][line[1]-1])
@@ -2582,6 +2664,8 @@ public class battleship{
                             coords[2] = hits - expectedHits;
                             previousX = coords[0];
                             previousY = coords[1];
+                            sea[coords[0]][coords[1]] = true;
+                            System.out.println("Try DOWN!");  
                             return coords;
                         }
                         else if(line[0]-1 >= 0)
@@ -2593,6 +2677,8 @@ public class battleship{
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true;
+                                System.out.println("Try FL!");  
                                 return coords;
                             }
                             else if(!sea[line[0]-1][line[1]])
@@ -2602,6 +2688,8 @@ public class battleship{
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true;
+                                System.out.println("Try SL!");  
                                 return coords;
                             }
                         }
@@ -2614,6 +2702,8 @@ public class battleship{
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true;
+                                System.out.println("Try FR!");  
                                 return coords;
                             }
                             else if(!sea[line[0]-1][line[1]])
@@ -2623,17 +2713,21 @@ public class battleship{
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true;
+                                System.out.println("Try SR!");  
                                 return coords;
                             }
                         }
-                        else
+                        
+                        for(int y = line[1]; y <= line[3]; y++)
                         {
-                            for(int y = line[1]; y <= line[3]; y++)
-                            {
-                                lineYErrors[line[0]][y] = true;
-                                return hunt(accb, btsb, subb, spdb);
-                            }
+                            lineYErrors[line[0]][y] = true;
+                            
+                            
                         }
+                        System.out.println("Recurse!Y");
+                        return hunt(accb, btsb, subb, spdb);
+                        
 
                     }
                     else
@@ -2646,6 +2740,8 @@ public class battleship{
                             coords[2] = hits - expectedHits;
                             previousX = coords[0];
                             previousY = coords[1];
+                            sea[coords[0]][coords[1]] = true;
+                            System.out.println("Try Right!");   
                             return coords;
                         }
                         else if((line[0]-1 >= 0) && !sea[line[0]-1][line[1]])
@@ -2655,6 +2751,8 @@ public class battleship{
                             coords[2] = hits - expectedHits;
                             previousX = coords[0];
                             previousY = coords[1];
+                            sea[coords[0]][coords[1]] = true;
+                            System.out.println("Try Left!");   
                             return coords;
                         }
                         else if(line[1]-1 >= 0)
@@ -2666,15 +2764,19 @@ public class battleship{
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true;
+                                System.out.println("Try FD!");   
                                 return coords;
                             }
-                            else if(!sea[line[0]][line[1]-1])
+                            else if(!sea[line[2]][line[1]-1])
                             {
-                                coords[0] = line[0];
+                                coords[0] = line[2];
                                 coords[1] = line[1] - 1;
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true;
+                                System.out.println("Try SD!");   
                                 return coords;
                             }
                         }
@@ -2687,26 +2789,32 @@ public class battleship{
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true;
+                                System.out.println("Try FU!");   
                                 return coords;
                             }
-                            else if(!sea[line[0]][line[1]+1])
+                            else if(!sea[line[2]][line[1]+1])
                             {
-                                coords[0] = line[0];
+                                coords[0] = line[2];
                                 coords[1] = line[1] + 1;
                                 coords[2] = hits - expectedHits;
                                 previousX = coords[0];
                                 previousY = coords[1];
+                                sea[coords[0]][coords[1]] = true; 
+                                System.out.println("Try SU!");  
                                 return coords;
                             }
                         }
-                        else
+                        
+                        for(int x = line[0]; x <= line[2]; x++)
                         {
-                            for(int x = line[0]; x <= line[2]; x++)
-                            {
-                                lineXErrors[line[x]][line[1]] = true;
-                                return hunt(accb, btsb, subb, spdb);
-                            }
+                            lineXErrors[x][line[1]] = true;
+                            
+                            
                         }
+                        System.out.println("Recurse!X");
+                        return hunt(accb, btsb, subb, spdb);
+                        
 
                     }
 
@@ -2720,6 +2828,7 @@ public class battleship{
                     coords[2] = hits - expectedHits;
                     previousX = coords[0];
                     previousY = coords[1];
+                    sea[coords[0]][coords[1]] = true; 
                     return coords;
 
                 }
@@ -2732,6 +2841,7 @@ public class battleship{
                 coords[2] = -1;
             }
 
+            sea[coords[0]][coords[1]] = true; 
             return coords;
 
         }
@@ -2744,37 +2854,37 @@ public class battleship{
             boolean miny = false;
             boolean maxx = false;
             boolean maxy = false;
-            if(previousX == 0)
+            if(previousHX == 0)
                 minx = true;
-            else if(previousX == 9)
+            else if(previousHX == 9)
                 maxx = true;
-            if(previousY == 0)
+            if(previousHY == 0)
                 miny = true;
-            else if(previousY == 9)
+            else if(previousHY == 9)
                 maxy = true;
 
-            if(!(minx || sea[previousX - 1][previousY]))
+            if(!(minx || sea[previousHX - 1][previousHY]))
             {
-                values[0] = previousX -1;
-                values[1] = previousY;
+                values[0] = previousHX -1;
+                values[1] = previousHY;
                 return values;
             }
-            else if(!(maxx || sea[previousX + 1][previousY]))
+            else if(!(maxx || sea[previousHX + 1][previousHY]))
             {
-                values[0] = previousX +1;
-                values[1] = previousY;
+                values[0] = previousHX +1;
+                values[1] = previousHY;
                 return values;
             }
-            else if(!(maxy || sea[previousX][previousY + 1]))
+            else if(!(maxy || sea[previousHX][previousHY + 1]))
             {
-                values[0] = previousX;
-                values[1] = previousY + 1;
+                values[0] = previousHX;
+                values[1] = previousHY + 1;
                 return values;
             }
-            else if(!(miny || sea[previousX][previousY - 1]))
+            else if(!(miny || sea[previousHX][previousHY - 1]))
             {
-                values[0] = previousX;
-                values[1] = previousY - 1;
+                values[0] = previousHX;
+                values[1] = previousHY - 1;
                 
             }
             else
@@ -2807,7 +2917,7 @@ public class battleship{
                             }
                             coords[0] = x;
                             coords[1] = y;
-                            coords[2] = i;
+                            coords[2] = i-1;
                             coords[3] = y;
                             return coords;
                         }
@@ -2833,7 +2943,7 @@ public class battleship{
                             coords[0] = x;
                             coords[1] = y;
                             coords[2] = x;
-                            coords[3] = i;
+                            coords[3] = i-1;
                             return coords;
                         }
                     }
@@ -2851,6 +2961,7 @@ public class battleship{
 
         public static void findACC()
         {
+            System.out.println("Find ACC!");
             boolean[][] negativeActiveHits = activeHits.clone();
             for(int x = 0; x < 10; x++)
             {
@@ -2876,8 +2987,11 @@ public class battleship{
                     {
                         numFound++;
                         xcors[numFound] = x;
+                        System.out.printf("acc xcors x = %d\n", x);
                         ycors[numFound] = y;
+                        System.out.printf("acc ycors y = %d\n", y);
                         rotations[numFound] = 0;
+                        System.out.printf("acc rotations x = %d\n", 0);
                     }
                 }
             }
@@ -2890,8 +3004,11 @@ public class battleship{
                     {
                         numFound++;
                         xcors[numFound] = x;
+                        System.out.printf("acc xcors x = %d\n", x);
                         ycors[numFound] = y;
+                        System.out.printf("acc ycors y = %d\n", y);
                         rotations[numFound] = 1;
+                        System.out.printf("acc rotations x = %d\n", 1);
                     }
                 }
             }
@@ -2904,8 +3021,11 @@ public class battleship{
                     {
                         numFound++;
                         xcors[numFound] = x;
+                        System.out.printf("acc xcors x = %d\n", x);
                         ycors[numFound] = y;
+                        System.out.printf("acc xcors y = %d\n", y);
                         rotations[numFound] = 2;
+                        System.out.printf("acc rotations = %d\n", 2);
                     }
                 }
             }
@@ -2918,8 +3038,11 @@ public class battleship{
                     {
                         numFound++;
                         xcors[numFound] = x;
+                        System.out.printf("acc xcors x = %d\n", x);
                         ycors[numFound] = y;
+                        System.out.printf("acc xcors y = %d\n", y);
                         rotations[numFound] = 3;
+                        System.out.printf("acc rotations = %d\n", 3);
                     }
                 }
             }
@@ -2928,6 +3051,7 @@ public class battleship{
             int[] arot = new int[100];
             int[] ax = new int[100];
             int[] ay = new int[100];
+            System.out.println(numFound);
             for(int i = 0; i <= numFound; i++)
             {
                 switch(rotations[i])
@@ -2935,23 +3059,29 @@ public class battleship{
                     case 0:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            if(xcors[i]+j == previousHX && ycors[i] == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
                         for(int j = 0; j < 2; j++)
                         {
-                            if(xcors[i]+j == previousX && ycors[i]+1 == previousY)
+                            if(xcors[i]+j == previousHX && ycors[i]+1 == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
@@ -2959,23 +3089,29 @@ public class battleship{
                     case 1:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i] == previousX && ycors[i]-j == previousY)
+                            if(xcors[i] == previousHX && ycors[i]-j == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
                         for(int j = 0; j < 2; j++)
                         {
-                            if(xcors[i]+1 == previousX && ycors[i]-j == previousY)
+                            if(xcors[i]+1 == previousHX && ycors[i]-j == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
@@ -2983,23 +3119,29 @@ public class battleship{
                     case 2:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i]-j == previousX && ycors[i] == previousY)
+                            if(xcors[i]-j == previousHX && ycors[i] == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
                         for(int j = 0; j < 2; j++)
                         {
-                            if(xcors[i]-j == previousX && ycors[i]-1 == previousY)
+                            if(xcors[i]-j == previousHX && ycors[i]-1 == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
@@ -3007,23 +3149,29 @@ public class battleship{
                     case 3:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            if(xcors[i] == previousHX && ycors[i]+j == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
                         for(int j = 0; j < 2; j++)
                         {
-                            if(xcors[i]-1 == previousX && ycors[i]+j == previousY)
+                            if(xcors[i]-1 == previousHX && ycors[i]+j == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
+                                System.out.printf("acc rfit = %d\n", rotations[i]);
                                 ax[temp] = xcors[i];
+                                System.out.printf("acc rx = %d\n", xcors[i]);
                                 ay[temp] = ycors[i];
+                                System.out.printf("acc ry = %d\n", ycors[i]);
                                 break;
                             }
                         }
@@ -3037,7 +3185,7 @@ public class battleship{
                 
 
                 
-
+                System.out.println("Ambiguous ACC!");
 
 
                 haveSuspiciousHits = true;
@@ -3064,12 +3212,14 @@ public class battleship{
                             negativeActiveHits[x][y] = true;
                     }
                 }
-
+                System.out.println("Found ACC!");
+                clearACC();
                 activeHits = negativeActiveHits.clone();
             }
         }
 
         public static void findBTS(){
+            System.out.println("Find BTS!");
             boolean[][] negativeActiveHits = activeHits.clone();
             for(int x = 0; x < 10; x++)
             {
@@ -3128,7 +3278,7 @@ public class battleship{
                     case 0:
                         for(int j = 0; j < 4; j++)
                         {
-                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            if(xcors[i]+j == previousHX && ycors[i] == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
@@ -3141,7 +3291,7 @@ public class battleship{
                     case 1:
                         for(int j = 0; j < 4; j++)
                         {
-                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            if(xcors[i] == previousHX && ycors[i]+j == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
@@ -3156,6 +3306,7 @@ public class battleship{
 
             if(temp > 0)
             {
+                System.out.println("Ambiguous BTS!");
                 haveSuspiciousHits = true;
                 sHitsBTS = true;
                 sbtsnum = temp;
@@ -3180,12 +3331,14 @@ public class battleship{
                             negativeActiveHits[x][y] = true;
                     }
                 }
-
+                System.out.println("Found BTS!");
+                clearBTS();
                 activeHits = negativeActiveHits;
             }
         }
 
         public static void findSUB(){
+            System.out.println("Find SUB!");
             boolean[][] negativeActiveHits = activeHits.clone();
             for(int x = 0; x < 10; x++)
             {
@@ -3244,7 +3397,7 @@ public class battleship{
                     case 0:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            if(xcors[i]+j == previousHX && ycors[i] == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
@@ -3257,7 +3410,7 @@ public class battleship{
                     case 1:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            if(xcors[i] == previousHX && ycors[i]+j == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
@@ -3272,6 +3425,7 @@ public class battleship{
 
             if(numFound > 0)
             {
+                System.out.println("Ambiguous SUB!");
                 haveSuspiciousHits = true;
                 sHitsSUB = true;
                 ssubnum = numFound;
@@ -3296,12 +3450,14 @@ public class battleship{
                             negativeActiveHits[x][y] = true;
                     }
                 }
-
+                System.out.println("Found SUB!");
+                clearSUB();
                 activeHits = negativeActiveHits;
             }
         }
 
         public static void findSPD(){
+            System.out.println("Find SPD!");
             boolean[][] negativeActiveHits = activeHits.clone();
             for(int x = 0; x < 10; x++)
             {
@@ -3360,7 +3516,7 @@ public class battleship{
                     case 0:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i]+j == previousX && ycors[i] == previousY)
+                            if(xcors[i]+j == previousHX && ycors[i] == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
@@ -3373,7 +3529,7 @@ public class battleship{
                     case 1:
                         for(int j = 0; j < 3; j++)
                         {
-                            if(xcors[i] == previousX && ycors[i]+j == previousY)
+                            if(xcors[i] == previousHX && ycors[i]+j == previousHY)
                             {
                                 temp++;
                                 arot[temp] = rotations[i];
@@ -3388,6 +3544,7 @@ public class battleship{
 
             if(numFound > 0)
             {
+                System.out.println("Ambiguous SPD!");
                 haveSuspiciousHits = true;
                 sHitsSPD = true;
                 sspdnum = numFound;
@@ -3412,8 +3569,187 @@ public class battleship{
                             negativeActiveHits[x][y] = true;
                     }
                 }
-
+                System.out.println("Found SPD!");
+                clearSPD();
                 activeHits = negativeActiveHits;
+            }
+        }
+
+        public static void clearACC()
+        {
+            
+            sHitsACC = false;
+            int r = acc[0];
+            int x = acc[1];
+            int y = acc[2];
+            System.out.printf("ClearACC!\nACCR: %d\nACCX: %d\nACCY: %d\n", r, x, y);
+            switch(r)
+            {
+                case 0:
+                    for(int i = acc[1]; i < x+3; i++)
+                    {
+                        activeHits[i][y] = false;
+                        lineXErrors[i][y] = false;
+                        lineYErrors[i][y] = false;
+                        sunkenShips[i][y]  = true;
+                        misses[i][y] = true;
+                    }
+                    for(int i = acc[1]; i < x+2; i++)
+                    {
+                        activeHits[i][y+1] = false;
+                        lineXErrors[i][y+1] = false;
+                        lineYErrors[i][y+1] = false;
+                        sunkenShips[i][y+1]  = true;
+                        misses[i][y] = true;
+                    }
+                    break;
+                case 1:
+                    for(int i = y; i >= y-2; i--)
+                    {
+                        activeHits[x][i] = false;
+                        lineXErrors[x][i] = false;
+                        lineYErrors[x][i] = false;
+                        sunkenShips[x][i]  = true;
+                        misses[x][i] = true;
+                    }
+                    for(int i = y; i >= y-1; i--)
+                    {
+                        activeHits[x+1][i] = false;
+                        lineXErrors[x+1][i] = false;
+                        lineYErrors[x+1][i] = false;
+                        sunkenShips[x+1][i]  = true;
+                        misses[x+1][i] = true;
+                    }
+                    break;
+                case 2:
+                    for(int i = x; i > x-3; i--)
+                    {
+                        activeHits[i][y] = false;
+                        lineXErrors[i][y] = false;
+                        lineYErrors[i][y] = false;
+                        sunkenShips[i][y]  = true;
+                        misses[i][y] = true;
+                    }
+                    for(int i = x; i > x-2; i--)
+                    {
+                        activeHits[i][y-1] = false;
+                        lineXErrors[i][y-1] = false;
+                        lineYErrors[i][y-1] = false;
+                        sunkenShips[i][y-1]  = true;
+                        misses[i][y-1] = true;
+                    }
+                    break;
+                case 3:
+                    for(int i = y; i < y + 3; i++)
+                    {
+                        activeHits[x][i] = false;
+                        lineXErrors[x][i] = false;
+                        lineYErrors[x][i] = false;
+                        sunkenShips[x][i]  = true;
+                        misses[x][i] = true;
+                    }
+                    for(int i = y; i < y + 2; i++)
+                    {
+                        activeHits[x-1][i] = false;
+                        lineXErrors[x-1][i] = false;
+                        lineYErrors[x-1][i] = false;
+                        sunkenShips[x-1][i]  = true;
+                        misses[x-1][i] = true;
+                    }
+                    break;
+            }
+        }
+
+        public static void clearBTS()
+        {
+            sHitsBTS = false;
+            int r = bts[0];
+            int x = bts[1];
+            int y = bts[2];
+            System.out.printf("ClearBTS!\nBTSR: %d\nBTSX: %d\nBTSY: %d\n", r, x, y);
+            if(r == 0)
+            {
+                for(int i = x; i < x + 4; i++)
+                {
+                    activeHits[i][y] = false;
+                    lineXErrors[i][y] = false;
+                    lineYErrors[i][y] = false;
+                    sunkenShips[i][y]  = true;
+                    misses[i][y] = true;
+                }
+            }
+            else
+            {
+                for(int i = y; i < y + 4; i++)
+                {
+                    activeHits[x][i] = false;
+                    lineXErrors[x][i] = false;
+                    lineYErrors[x][i] = false;
+                    sunkenShips[x][i]  = true;
+                    misses[x][i] = true;
+                }
+            }
+        }
+
+        public static void clearSUB()
+        {
+            sHitsSUB = false;
+            int r = sub[0];
+            int x = sub[1];
+            int y = sub[2];
+            System.out.printf("ClearSUB!\nSUBR: %d\nSUBX: %d\nSUBY: %d\n", r, x, y);
+            if(r == 0)
+            {
+                for(int i = x; i < x + 3; i++)
+                {
+                    activeHits[i][y] = false;
+                    lineXErrors[i][y] = false;
+                    lineYErrors[i][y] = false;
+                    sunkenShips[i][y]  = true;
+                    misses[i][y] = true;
+                }
+            }
+            else
+            {
+                for(int i = y; i < y + 3; i++)
+                {
+                    activeHits[x][i] = false;
+                    lineXErrors[x][i] = false;
+                    lineYErrors[x][i] = false;
+                    sunkenShips[x][i]  = true;
+                    misses[x][i] = true;
+                }
+            }
+        }
+
+        public static void clearSPD()
+        {
+            sHitsSPD = false;
+            int r = spd[0];
+            int x = spd[1];
+            int y = spd[2];
+            System.out.printf("ClearSPD!\nSPDR: %d\nSPDX: %d\nSPDY: %d\n", r, x, y);
+            if(r == 0)
+            {
+                for(int i = x; i < x + 2; i++)
+                {
+                    activeHits[i][y] = false;
+                    lineXErrors[i][y] = false;
+                    lineYErrors[i][y] = false;
+                    sunkenShips[i][y]  = true;
+                    misses[i][y] = true;
+                }
+            }
+            else
+            {
+                for(int i = y; i < y + 2; i++)
+                {
+                    activeHits[x][i] = false;
+                    lineXErrors[x][i] = false;
+                    lineYErrors[x][i] = false;
+                    sunkenShips[x][i]  = true;
+                    misses[x][i] = true;
+                }
             }
         }
     }

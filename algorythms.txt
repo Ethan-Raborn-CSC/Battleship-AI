@@ -16,3 +16,6 @@ idea is to:
 
 at line 1907
 Need to figure out who won and print results
+
+
+note: add individual previous xy coordinates for each ship for finding algorithym

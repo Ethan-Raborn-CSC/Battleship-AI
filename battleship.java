@@ -1717,6 +1717,7 @@ public class battleship{
         }
 
         boolean unfinished = true;
+        boolean playerwin = false;
         while(unfinished)
         {
             
@@ -1809,9 +1810,11 @@ public class battleship{
                 }
                 for(int i = 0; i < 10; i++)
                     System.out.println();
+                if(!unfinished)
+                    playerwin = true;
             }
             
-            if(found)
+            if(found && unfinished)
             {
                 aicoords = HeatMapAI.hunt(acaa, btsa, suba, spda);
                 tester = returnSunken(pships, HeatMapAI.getSea());
@@ -1855,8 +1858,10 @@ public class battleship{
                             found = false;
                     }
                 }
-            }
-            else
+                unfinished = checkRemainingShips(HeatMapAI.getSea(), pships);
+                
+            }   
+            else if(unfinished)
             {
                 aicoords = HeatMapAI.find(acaa, btsa, suba, spda);
                 tester = returnSunken(pships, HeatMapAI.getSea());
@@ -1899,12 +1904,19 @@ public class battleship{
                         if(aicoords[2] == 1)
                             found = false;
                     }
+             
                 }
+                unfinished = checkRemainingShips(HeatMapAI.getSea(), pships);
             }
+            
         }
-        unfinished = checkRemainingShips(HeatMapAI.getSea(), pships);
-
         
+        if(playerwin)
+            System.out.println("Congradulations! You beat the AI!");
+        else
+            System.out.println("Oh no! You were beaten by the AI!");
+        System.out.println("Here is your final board:");
+        printMuliplayer(pships, psea, aships, HeatMapAI.getSea());
     }
     
 
@@ -2122,7 +2134,7 @@ public class battleship{
     }
 
     public static boolean checkMAPBATSplacement(int rotation, int x, int y, boolean[][] ships){
-        //System.out.printf("BAT\nrotation: %d\nx: %d\ny: %d\nlength: %d\n1: %d\n", rotation, x, y, ships.getGrid().length, ships.getGrid()[1].length);
+        //System.out.printf("BAT\nrotation: %d\nx: %d\ny: %d\n", rotation, x, y);
         if(rotation == 0)
         {
             for(int i = x; i < x + 4; i++)
@@ -2321,7 +2333,7 @@ public class battleship{
 
         public static int[] find(boolean accb, boolean btsb, boolean subb, boolean spdb)
         {
-            int[] coords = heatMapLogic(sea, accb, btsb, subb, spdb);
+            int[] coords = heatMapLogic(accb, btsb, subb, spdb);
             previousX = coords[0];
             previousY = coords[1];
             sea[previousX][previousY] = true;
@@ -2360,7 +2372,7 @@ public class battleship{
                 for(int y = 2; y < 10; y++)
                 {
                     if(checkMAPACCplacement(1, x, y, sea))
-                        map = mapACC(0, x, y, map);
+                        map = mapACC(1, x, y, map);
                 }
             }
 
@@ -2391,18 +2403,18 @@ public class battleship{
         if(bts)
         {
             //rotation 0
-            for(int x = 0; x < 10; x++)
+            for(int x = 0; x < 7; x++)
             {
-                for(int y = 0; y < 7; y++)
+                for(int y = 0; y < 10; y++)
                 {
                     if(checkMAPBATSplacement(0, x, y, sea))
                         map = mapBAT(0, x, y, map);
                 }
             }
             //rotation 1
-            for(int x = 0; x < 7; x++)
+            for(int x = 0; x < 10; x++)
             {
-                for(int y = 0; y < 10; y++)
+                for(int y = 0; y < 7; y++)
                 {
                     if(checkMAPBATSplacement(1, x, y, sea))
                         map = mapBAT(1, x, y, map);
@@ -2419,7 +2431,7 @@ public class battleship{
                 for(int y = 0; y < 10; y++)
                 {
                     if(checkMAPSUBplacement(0, x, y, sea))
-                        map = mapSUB(y, x, y, map);
+                        map = mapSUB(0, x, y, map);
                 }
             }
             //rotation 1

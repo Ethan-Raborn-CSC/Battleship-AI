@@ -37,14 +37,35 @@ public class battleshipAI
 
     public static void runMultiplayer(Scanner kin, Random rand)
     {
+
         battleshipAI.player player1 = new player(1);
-        scroll();
+        turnScroll();
         battleshipAI.player player2 = new player(2);
-        scroll();
+        continueScroll();
 
         
+        int first = rand.nextInt(2);
+        System.out.printf("It has been randomly decided that player %d will go first!\n", first+1);
+        continueScroll();
 
+        boolean unfinishedGame = true;
+        int coordx = -1;
+        int coordy = -1;
+        while(unfinishedGame)
+        {
+            if(first == 0)
+            {
+                player1.multTurnTake(player2.getSea(), player2.getFleet());
+                first = 1;
+            }
+            else
+            {
+                player2.multTurnTake(player1.getSea(), player1.getFleet());
+                first = 0;
+            }
 
+            unfinishedGame = false;
+        }
     }
 
 
@@ -879,17 +900,238 @@ public class battleshipAI
         System.out.printf("  0 1 2 3 4 5 6 7 8 9\n");
     }
 
+    public static void printTurnBoard(boolean[] shipsLeft, int[][] shipLocations, boolean[][] sea, boolean[][] enemySea, boolean[][] enemyShips)
+    {
 
-    public static void scroll()
+        System.out.printf("Key:\n\tA: Aircraft Carrier\n\tB: Battleship\n\tU: Submarine\n\tS: Speedboat\n\tX: Hit!\n\tD: Destroyed\n\tO: Miss\n");
+        System.out.printf("Here's your current board:\n\nYour Fleet:\t\tYour Sea:\n");
+
+        
+
+        int[][] printGrid = makeIntGrid();
+
+        
+        int x;
+        int y;
+
+
+        x = shipLocations[0][1];
+        y = shipLocations[0][2];
+        switch(shipLocations[0][0])
+        {
+            case 0:
+                for(int i = x; i < x+3; i++)
+                    printGrid[i][y] = 5;
+                y++;
+                for(int i = x; i < x+2; i++)
+                    printGrid[i][y] = 5;
+                break;
+            case 1:
+                for(int j = y; j > y-3; j--)
+                    printGrid[x][j] = 5;
+                x++;
+                for(int j = y; j > y-2; j--)
+                    printGrid[x][j] = 5;
+                break;
+            case 2:
+                for(int i = x; i > x-3; i--)
+                    printGrid[i][y] = 5;
+                y--;
+                for(int i = x; i > x-2; i--)
+                    printGrid[i][y] = 5;
+                break;
+            case 3:
+                for(int j = y; j < y+3; j++)
+                    printGrid[x][j] = 5;
+                x--;
+                for(int j = y; j < y+2; j++)
+                    printGrid[x][j] = 5;
+                break;
+        }
+
+        x = shipLocations[1][1];
+        y = shipLocations[1][2];
+        if(shipLocations[1][0] == 0)
+        {
+            for(int i = x; i < x+4; i++)
+                printGrid[i][y] = 4;
+        }
+        else
+        {
+            for(int j = y; j < y+4; j++)
+                printGrid[x][j] = 4;
+        }
+
+        x = shipLocations[2][1];
+        y = shipLocations[2][2];
+        if(shipLocations[2][0] == 0)
+        {
+            for(int i = x; i < x+3; i++)
+                printGrid[i][y] = 3;
+        }
+        else
+        {
+            for(int j = y; j < y+3; j++)
+                printGrid[x][j] = 3;
+        }
+
+        x = shipLocations[3][1];
+        y = shipLocations[3][2];
+        if(shipLocations[3][0] == 0)
+        {
+            for(int i = x; i < x+2; i++)
+                printGrid[i][y] = 2;
+        }
+        else
+        {
+            for(int j = y; j < y+2; j++)
+                printGrid[x][j] = 2;
+        }
+
+
+        for(x = 0; x < 10; x++)
+        {
+            for(y = 0; y < 10; y++)
+            {
+                if(enemySea[x][y])
+                {
+                    if(printGrid[x][y] != 0)
+                    {
+                        printGrid[x][y] = 1;
+                    }
+                    else
+                    {
+                        printGrid[x][y] = 10;
+                    }
+                }
+            }
+        }
+
+        if(!shipsLeft[0])
+        {
+            for(x = 0; x < 10; x++)
+            {
+                for(y = 0; y < 10; y++)
+                {
+                    if(printGrid[x][y] == 5)
+                        printGrid[x][y] = -1;
+                }
+            }
+        }
+
+        if(!shipsLeft[1])
+        {
+            for(x = 0; x < 10; x++)
+            {
+                for(y = 0; y < 10; y++)
+                {
+                    if(printGrid[x][y] == 4)
+                        printGrid[x][y] = -1;
+                }
+            }
+        }
+
+        if(!shipsLeft[2])
+        {
+            for(x = 0; x < 10; x++)
+            {
+                for(y = 0; y < 10; y++)
+                {
+                    if(printGrid[x][y] == 3)
+                        printGrid[x][y] = -1;
+                }
+            }
+        }
+
+        if(!shipsLeft[3])
+        {
+            for(x = 0; x < 10; x++)
+            {
+                for(y = 0; y < 10; y++)
+                {
+                    if(printGrid[x][y] == 2)
+                        printGrid[x][y] = -1;
+                }
+            }
+        }
+
+        for(y = 9; y > -1; y--)
+        {
+            System.out.printf("%d ", y);
+            for(x = 0; x < 10; x++)
+            {
+                switch(printGrid[x][y])
+                {
+                    case -1:
+                        System.out.print("D ");
+                        break;
+                    case 0:
+                        System.out.print("  ");
+                        break;
+                    case 1:
+                        System.out.print("X ");
+                        break;
+                    case 2:
+                        System.out.print("S ");
+                        break;
+                    case 3:
+                        System.out.print("U ");
+                        break;
+                    case 4:
+                        System.out.print("B ");
+                        break;
+                    case 5:
+                        System.out.print("A ");
+                        break;
+                    case 10:
+                        System.out.print("O ");
+                        break;
+                    default:
+                        System.out.print("P ");
+                        break;
+                }
+            }
+
+            System.out.printf("\t%d ", y);
+            for(x = 0; x < 10; x++)
+            {
+                if(sea[x][y])
+                {
+                    if(enemyShips[x][y])
+                    {
+                        System.out.print("X ");
+                    }
+                    else
+                    {
+                        System.out.print("O ");
+                    }
+                }
+            }
+            System.out.println("");
+        }
+        System.out.printf("  0 1 2 3 4 5 6 7 8 9\t   0 1 2 3 4 5 6 7 8 9\n");
+    }
+
+    public static void turnScroll()
     {
         Scanner kin = new Scanner(System.in);
         System.out.printf("Press return when you're ready to hand off the comptuer to the other player.\n\t>");
         kin.nextLine();
 
-        for(int i = 0; i < 50; i++)
+        for(int i = 0; i < 100; i++)
             System.out.printf("\n");
         System.out.printf("Press return when you're ready to begin.\n\t>");
         kin.nextLine();
+    }
+
+    public static void continueScroll()
+    {
+        Scanner kin = new Scanner(System.in);
+
+        System.out.printf("Press return when you're ready.\n");
+        kin.nextLine();
+        for(int i = 0; i < 100; i++)
+            System.out.printf("\n");
     }
 
 
@@ -918,11 +1160,13 @@ public class battleshipAI
 
         boolean[][] fleet;
         boolean[][] sea;
+        int playerNumber = -1;
 
         public player(int number)
         {
             fleet = makeBooleanGrid();
             sea = makeBooleanGrid();
+            playerNumber = number;
 
             startup(number);
         }
@@ -979,7 +1223,15 @@ public class battleshipAI
 
         }
 
+        public int[] multTurnTake(boolean[][] enemySea, boolean[][] enemyFleet)
+        {
+            int[] coords = new int[2];
+            System.out.printf("It's your turn player %d!\n", playerNumber);
 
+            printTurnBoard(getShipsLeft(), getShipLocations(), sea, enemySea, enemyFleet);
+
+            return coords;
+        }
 
 
         private void randomPlaceACC()
@@ -1813,6 +2065,16 @@ public class battleshipAI
             return locations;
         }
     
+        public boolean[][] getFleet()
+        {
+            return fleet;
+        }
+
+        public boolean[][] getSea()
+        {
+            return sea;
+        }
+
 
         public void shoot(int x, int y)
         {

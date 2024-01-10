@@ -343,6 +343,8 @@ public class battleshipAI
     }
 
 
+
+    //check functions
     public static boolean checkACCPlacement(boolean[] shipsLeft, int[][] shipLocations, int rotation, int xCoordinate, int yCoordinate)
     {
         boolean[][] grid = makeBooleanGrid();
@@ -353,33 +355,21 @@ public class battleshipAI
         {
             if(shipsLeft[1])
             {
-                //System.out.printf("ACC Place Bts\n");
                 grid = placeBTS(grid, shipLocations[1][0], shipLocations[1][1], shipLocations[1][2]);
-                //printSea(grid);
             }
             if(shipsLeft[2])
             {
-                //System.out.printf("ACC Place Sub\n");
                 grid = placeSUB(grid, shipLocations[2][0], shipLocations[2][1], shipLocations[2][2]);
-                //printSea(grid);
             }
             if(shipsLeft[3])
             {
-                //System.out.printf("ACC Place Spd\n");
                 grid = placeSPD(grid, shipLocations[3][0], shipLocations[3][1], shipLocations[3][2]);
-                //printSea(grid);
             }
-
-            //System.out.printf("Final ACC Pre Check Grid:\n");
-            //printSea(grid);
 
 
             int r = rotation;
             int x = xCoordinate;
             int y = yCoordinate;
-
-
-            //System.out.printf("ACC input values. R: %d, X: %d, Y: %d\n", r, x, y);
 
 
             if(r < 0 || r > 3)
@@ -403,29 +393,18 @@ public class battleshipAI
                     }
                     for(int i = x; i < x+3; i++)
                     {
-                        //System.out.printf("Check ACC R0, I: %d, Y: %d RESULT: ", i, y);
                         if(grid[i][y])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
+                        
                     }
                     for(int i = x; i < x+2; i++)
                     {
-                        //System.out.printf("Check ACC R0, I: %d, Y: %d RESULT: ", i, y+1);
                         if(grid[i][y+1])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
                     }
                     break;
                 case 1:
@@ -441,29 +420,18 @@ public class battleshipAI
                     }
                     for(int i = y; i > y-3; i--)
                     {
-                        //System.out.printf("Check ACC R1, X: %d, I: %d RESULT: ", x, i);
                         if(grid[x][i])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
+                        
                     }
                     for(int i = y; i > y-2; i--)
                     {
-                        //System.out.printf("Check ACC R1, X: %d, I: %d RESULT: ", x+1, i);
                         if(grid[x+1][i])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
                     }
                     break;
                 case 2:
@@ -479,29 +447,18 @@ public class battleshipAI
                     }
                     for(int i = x; i > x-3; i--)
                     {
-                        //System.out.printf("Check ACC R2, I: %d, Y: %d RESULT: ", i, y);
                         if(grid[i][y])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
+                        
                     }
                     for(int i = x; i > x-2; i--)
                     {
-                        //System.out.printf("Check ACC R2, I: %d, Y: %d RESULT: ", i, y-1);
                         if(grid[i][y-1])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
                     }
                     break;
                 case 3:
@@ -517,35 +474,24 @@ public class battleshipAI
                     }
                     for(int i = y; i < y+3; i++)
                     {
-                        //System.out.printf("Check ACC R3, X: %d, I: %d RESULT: ", x, i);
                         if(grid[x][i])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
+                        
                     }
                     for(int i = y; i < y+2; i++)
                     {
-                        //System.out.printf("Check ACC R3, X: %d, I: %d RESULT: ", x-1, i);
                         if(grid[x-1][i])
                         {
-                            //System.out.printf("TRUE\n");
                             return false;
                         }
-                        // else
-                        // {
-                        //     System.out.printf("false\n");
-                        // }
+                        
                     }
                     break;
             }
 
         }
-        //System.out.printf("ACC Check Returned True\n");
         return true;
     }
 
@@ -559,32 +505,20 @@ public class battleshipAI
         {
             if(shipsLeft[0])
             {
-                //System.out.printf("BTS Place Acc\n");
                 grid = placeACC(grid, shipLocations[0][0], shipLocations[0][1], shipLocations[0][2]);
-                //printSea(grid);
             }
             if(shipsLeft[2])
             {
-                //System.out.printf("BTS Place Sub\n");
                 grid = placeSUB(grid, shipLocations[2][0], shipLocations[2][1], shipLocations[2][2]);
-                //printSea(grid);
             }
             if(shipsLeft[3])
             {
-                //System.out.printf("BTS Place Spd\n");
                 grid = placeSPD(grid, shipLocations[3][0], shipLocations[3][1], shipLocations[3][2]);
-                //printSea(grid);
             }
-
-            //System.out.printf("Final BTS Pre Check Grid:\n");
-            //printSea(grid);
-
 
             int r = rotation;
             int x = xCoordinate;
             int y = yCoordinate;
-
-            //System.out.printf("BTS input values. R: %d, X: %d, Y: %d\n", r, x, y);
 
             if(r < 0 || r > 1)
             {
@@ -606,16 +540,11 @@ public class battleshipAI
                 }
                 for(int i = x; i < x+4; i++)
                 {
-                    //System.out.printf("Check BTS R0, I: %d, Y: %d RESULT: ", i, y);
                     if(grid[i][y])
                     {
-                        //System.out.printf("TRUE\n");
                         return false;
                     }
-                    // else
-                    // {
-                    //     System.out.printf("false\n");
-                    // }
+                    
                 }
             }
             else
@@ -632,21 +561,15 @@ public class battleshipAI
                 }
                 for(int i = y; i < y+4; i++)
                 {
-                    //System.out.printf("Check BTS R1, X: %d, I: %d RESULT: ", x, i);
                     if(grid[x][i])
                     {
-                        //System.out.printf("TRUE\n");
                         return false;
                     }
-                    // else
-                    // {
-                    //     System.out.printf("false\n");
-                    // }
+                    
                 }
             }
 
         }
-        //System.out.printf("BTS Check Returned True\n");
         return true;
     }
 
@@ -660,31 +583,20 @@ public class battleshipAI
         {
             if(shipsLeft[0])
             {
-                //System.out.printf("SUB Place Acc\n");
                 grid = placeACC(grid, shipLocations[0][0], shipLocations[0][1], shipLocations[0][2]);
-                //printSea(grid);
             }
             if(shipsLeft[1])
             {
-                //System.out.printf("SUB Place Bts\n");
                 grid = placeBTS(grid, shipLocations[1][0], shipLocations[1][1], shipLocations[1][2]);
-                //printSea(grid);
             }
             if(shipsLeft[3])
             {
-                //System.out.printf("SUB Place Spd\n");
                 grid = placeSPD(grid, shipLocations[3][0], shipLocations[3][1], shipLocations[3][2]);
-                //printSea(grid);
             }
-
-            //System.out.printf("Final SUB Pre Check Grid:\n");
-            //printSea(grid);
 
             int r = rotation;
             int x = xCoordinate;
             int y = yCoordinate;
-
-            //System.out.printf("SUB input values. R: %d, X: %d, Y: %d\n", r, x, y);
 
             if(r < 0 || r > 1)
             {
@@ -706,16 +618,11 @@ public class battleshipAI
                 }
                 for(int i = x; i < x+3; i++)
                 {
-                    //System.out.printf("Check SUB R0, I: %d, Y: %d RESULT: ", i, y);
                     if(grid[i][y])
                     {
-                        //System.out.printf("TRUE\n");
                         return false;
                     }
-                    // else
-                    // {
-                    //     System.out.printf("false\n");
-                    // }
+                    
                 }
             }
             else
@@ -732,21 +639,15 @@ public class battleshipAI
                 }
                 for(int i = y; i < y+3; i++)
                 {
-                    //System.out.printf("Check SUB R1, X: %d, I: %d RESULT: ", x, i);
                     if(grid[x][i])
                     {
-                        //System.out.printf("TRUE\n");
                         return false;
                     }
-                    // else
-                    // {
-                    //     System.out.printf("false\n");
-                    // }
+                    
                 }
             }
 
         }
-        //System.out.printf("SUB Check Returned True\n");
         return true;
     }
 
@@ -760,32 +661,20 @@ public class battleshipAI
         {
             if(shipsLeft[0])
             {
-                //System.out.printf("SPD Place Acc\n");
                 grid = placeACC(grid, shipLocations[0][0], shipLocations[0][1], shipLocations[0][2]);
-                //printSea(grid);
             }
             if(shipsLeft[1])
             {
-                //System.out.printf("SPD Place Bts\n");
                 grid = placeBTS(grid, shipLocations[1][0], shipLocations[1][1], shipLocations[1][2]);
-                //printSea(grid);
             }
             if(shipsLeft[2])
             {
-                //System.out.printf("SPD Place Sub\n");
                 grid = placeSUB(grid, shipLocations[2][0], shipLocations[2][1], shipLocations[2][2]);
-                //printSea(grid);
             }
-
-            //System.out.printf("Final SPD Pre Check Grid:\n");
-            //printSea(grid);
-
 
             int r = rotation;
             int x = xCoordinate;
             int y = yCoordinate;
-
-            //System.out.printf("SPD input values. R: %d, X: %d, Y: %d\n", r, x, y);
 
             if(r < 0 || r > 1)
             {
@@ -807,16 +696,10 @@ public class battleshipAI
                 }
                 for(int i = x; i < x+2; i++)
                 {
-                    //System.out.printf("Check SPD R0, I: %d, Y: %d RESULT: ", i, y);
                     if(grid[i][y])
                     {
-                        //System.out.printf("TRUE\n");
                         return false;
                     }
-                    // else
-                    // {
-                    //     System.out.printf("false\n");
-                    // }
                 }
             }
             else
@@ -833,26 +716,21 @@ public class battleshipAI
                 }
                 for(int i = y; i < y+2; i++)
                 {
-                    //System.out.printf("Check SPD R1, X: %d, I: %d RESULT: ", x, i);
                     if(grid[x][i])
                     {
-                        //System.out.printf("TRUE\n");
                         return false;
                     }
-                    // else
-                    // {
-                    //     System.out.printf("false\n");
-                    // }
+                    
                 }
             }
 
         }
-        //System.out.printf("SPD Check Returned True\n");
         return true;
     }
 
 
 
+    //print and scroll functions
     public static void printFleet(boolean[] shipsLeft, int[][] shipLocations)
     {
         System.out.printf("Key:\n\tA: Aircraft Carrier\n\tB: Battleship\n\tU: Submarine\n\tS: Speedboat\nCurrent Fleet:\n");
@@ -862,7 +740,6 @@ public class battleshipAI
         {
             int accx = shipLocations[0][1];
             int accy = shipLocations[0][2];
-            //System.out.printf("PRINTVALUES LN682 UNDER printFleet\nACCR: %d\nACCX: %d\nACCY: %d\n", shipLocations[0][0], accx, accy);
             switch(shipLocations[0][0])
             {
                 case 0:
@@ -909,7 +786,6 @@ public class battleshipAI
         }
         if(shipsLeft[1])
         {
-            //System.out.printf("PRINTVALUES LN729 UNDER printFleet\nBTSR: %d\nBTSX: %d\nBTSY: %d\n", shipLocations[1][0], shipLocations[1][1], shipLocations[1][2]);
             if(shipLocations[1][0] == 0)
             {
                 for(int i = shipLocations[1][1]; i < shipLocations[1][1]+4; i++)
@@ -923,7 +799,6 @@ public class battleshipAI
         }
         if(shipsLeft[2])
         {
-            //System.out.printf("PRINTVALUES LN743 UNDER printFleet\nSUBR: %d\nSUBX: %d\nSUBY: %d\n", shipLocations[2][0], shipLocations[2][1], shipLocations[2][2]);
             if(shipLocations[2][0] == 0)
             {
                 for(int i = shipLocations[2][1]; i < shipLocations[2][1]+3; i++)
@@ -937,7 +812,6 @@ public class battleshipAI
         }
         if(shipsLeft[3])
         {
-            //System.out.printf("PRINTVALUES LN757 UNDER printFleet\nSPDR: %d\nSPDX: %d\nSPDY: %d\n", shipLocations[3][0], shipLocations[3][1], shipLocations[3][2]);
             if(shipLocations[3][0] == 0)
             {
                 for(int i = shipLocations[3][1]; i < shipLocations[3][1]+2; i++)
@@ -1077,23 +951,18 @@ public class battleshipAI
                     selection = rand.nextInt(4);
                     if(selection == 0 && !accb)
                     {
-                        //System.out.printf("Random ACC!\n");
                         randomPlaceACC();
-                        
                     }
                     else if(selection == 1 && !btsb)
                     {
-                        //System.out.printf("Random BTS!\n");
                         randomPlaceBTS();
                     }
                     else if(selection == 2 && !subb)
                     {
-                        //System.out.printf("Random SUB!\n");
                         randomPlaceSUB();
                     }
                     else if(selection == 3 && !spdb)
                     {
-                        //System.out.printf("Random SPD!\n");
                         randomPlaceSPD();
                     }
                     else if(accb && btsb && subb && spdb)
@@ -1172,7 +1041,6 @@ public class battleshipAI
                 check = checkACCPlacement(getShipsLeft(), getShipLocations(), rotation, x, y);
                 if(check)
                 {
-                    //System.out.printf("ACC Check Clear!\n");
                     fleet = placeACC(fleet, rotation, x, y);
                     accb = true;
                     accr = rotation;
@@ -1228,7 +1096,6 @@ public class battleshipAI
                 check = checkBTSPlacement(getShipsLeft(), getShipLocations(), rotation, x, y);
                 if(check)
                 {
-                    //System.out.printf("BTS Check Clear!\n");
                     fleet = placeBTS(fleet, rotation, x, y);
                     btsb = true;
                     btsr = rotation;
@@ -1284,7 +1151,6 @@ public class battleshipAI
                 check = checkSUBPlacement(getShipsLeft(), getShipLocations(), rotation, x, y);
                 if(check)
                 {
-                    //System.out.printf("SUB Check Clear!\n");
                     fleet = placeSUB(fleet, rotation, x, y);
                     subb = true;
                     subr = rotation;
@@ -1340,7 +1206,6 @@ public class battleshipAI
                 check = checkSPDPlacement(getShipsLeft(), getShipLocations(), rotation, x, y);
                 if(check)
                 {
-                    //System.out.printf("SPD Check Clear!\n");
                     fleet = placeSPD(fleet, rotation, x, y);
                     spdb = true;
                     spdr = rotation;

@@ -55,16 +55,23 @@ public class battleshipAI
         {
             if(first == 0)
             {
-                player1.multTurnTake(player2.getSea(), player2.getFleet());
+                player1.multTurnTake(player2);
+                player2.checkShips(player1.getSea());
+                unfinishedGame = checkIfGameUnfinished(player2.getShipsLeft());
                 first = 1;
             }
             else
             {
-                player2.multTurnTake(player1.getSea(), player1.getFleet());
+                player2.multTurnTake(player1);
+                player1.checkShips(player1.getSea());
+                unfinishedGame = checkIfGameUnfinished(player1.getShipsLeft());
                 first = 0;
             }
-
-            unfinishedGame = false;
+            
+            if(unfinishedGame)
+                turnScroll();
+            else
+                continueScroll();
         }
     }
 
@@ -114,6 +121,7 @@ public class battleshipAI
 
         return grid;
     }
+
 
 
     //place funcitons
@@ -749,6 +757,12 @@ public class battleshipAI
         return true;
     }
 
+    public static boolean checkIfGameUnfinished(boolean[] shipsLeft)
+    {
+        if(shipsLeft[0]||shipsLeft[1]||shipsLeft[2]||shipsLeft[3])
+            return true;
+        return false;
+    }
 
 
     //print and scroll functions
@@ -1106,10 +1120,14 @@ public class battleshipAI
                         System.out.print("O ");
                     }
                 }
+                else
+                {
+                    System.out.print("  ");
+                }
             }
             System.out.println("");
         }
-        System.out.printf("  0 1 2 3 4 5 6 7 8 9\t   0 1 2 3 4 5 6 7 8 9\n");
+        System.out.printf("  0 1 2 3 4 5 6 7 8 9\t  0 1 2 3 4 5 6 7 8 9\n");
     }
 
     public static void turnScroll()
@@ -1223,14 +1241,48 @@ public class battleshipAI
 
         }
 
-        public int[] multTurnTake(boolean[][] enemySea, boolean[][] enemyFleet)
+        public void multTurnTake(player other)
         {
+            Scanner kin = new Scanner(System.in);
             int[] coords = new int[2];
             System.out.printf("It's your turn player %d!\n", playerNumber);
 
-            printTurnBoard(getShipsLeft(), getShipLocations(), sea, enemySea, enemyFleet);
+            printTurnBoard(getShipsLeft(), getShipLocations(), sea, other.getSea(), other.getFleet());
 
-            return coords;
+            
+            int x = -1, y = -1;
+            boolean needRepeat = true;
+            while(needRepeat)
+            {
+                System.out.printf("Choose a firing coordinate!\n");
+                System.out.printf("\tX: ");
+                x = kin.nextInt();
+                kin.nextLine();
+                System.out.printf("\tY: ");
+                y = kin.nextInt();
+                kin.nextLine();
+
+                if(x > -1 && x < 10 && y > -1 && y < 10 && (!sea[x][y]))
+                {
+                    needRepeat = false;
+                }
+                else
+                {
+                    System.out.printf("Inputed coordinates are out of bounds or already taken!\nTry again!\n");
+                }
+            }
+
+            sea[x][y] = true;
+
+            if(other.getFleet()[x][y])
+            {
+                System.out.printf("HIT!\n");
+            }
+            else
+            {
+                System.out.printf("MISS!\n");
+            }
+
         }
 
 
@@ -2030,6 +2082,145 @@ public class battleshipAI
         }
 
 
+        public void checkShips(boolean[][] eSea)
+        {
+            eSea = invertGrid(eSea);
+
+            int x = accx;
+            int y = accy;
+            boolean sunk = true;
+
+
+            switch(accr)
+            {
+                case 0:
+                    for(int i = x; i < x+3; i++)
+                    {
+                        if(eSea[i][y])
+                            sunk = false;
+                    }
+                    y++;
+                    for(int i = x; i < x+2; i++)
+                    {
+                        if(eSea[i][y])
+                            sunk = false;
+                    }
+                    break;
+                case 1:
+                    for(int j = y; j > y-3; j--)
+                    {
+                        if(eSea[x][j])
+                            sunk = false;
+                    }
+                    x++;
+                    for(int j = y; j > y-2; j--)
+                    {
+                        if(eSea[x][j])
+                            sunk = false;
+                    }
+                    break;
+                case 2:
+                    for(int i = x; i > x-3; i--)
+                    {
+                        if(eSea[i][y])
+                            sunk = false;
+                    }
+                    y--;
+                    for(int i = x; i > x-2; i--)
+                    {
+                        if(eSea[i][y])
+                            sunk = false;
+                    }
+                    break;
+                case 3:
+                    for(int j = y; j < y+3; j++)
+                    {
+                        if(eSea[x][j])
+                            sunk = false;
+                    }
+                    x--;
+                    for(int j = y; j < y+2; j++)
+                    {
+                        if(eSea[x][j])
+                            sunk = false;
+                    }
+                    break;
+                default:
+                    System.out.printf("CHECKSHIPS ACC ROTATION ERROR");
+                    break;
+            }
+
+            if(sunk)
+                accb = false;
+            
+            sunk = true;
+            x = btsx;
+            y = btsy;
+            if(btsr == 0)
+            {
+                for(int i = x; i < x+4; i++)
+                {
+                    if(eSea[i][y])
+                        sunk = false;
+                }
+            }
+            else
+            {
+                for(int j = y; j < y+4; j++)
+                {
+                    if(eSea[x][j])
+                        sunk = false;
+                }
+            }
+            if(sunk)
+                btsb = false;
+
+            sunk = true;
+            x = subx;
+            y = suby;
+            if(subr == 0)
+            {
+                for(int i = x; i < x+3; i++)
+                {
+                    if(eSea[i][y])
+                        sunk = false;
+                }
+            }
+            else
+            {
+                for(int j = y; j < y+3; j++)
+                {
+                    if(eSea[x][j])
+                        sunk = false;
+                }
+            }
+            if(sunk)
+                subb = false;
+            
+            sunk = true;
+            x = spdx;
+            y = spdy;
+            if(spdr == 0)
+            {
+                for(int i = x; i < x+2; i++)
+                {
+                    if(eSea[i][y])
+                        sunk = false;
+                }
+            }
+            else
+            {
+                for(int j = y; j < y+2; j++)
+                {
+                    if(eSea[x][j])
+                        sunk = false;
+                }
+            }
+            if(sunk)
+                spdb = false;
+        }
+
+
         public boolean[] getShipsLeft()
         {
             boolean[] numSunk = new boolean[4];
@@ -2067,12 +2258,12 @@ public class battleshipAI
     
         public boolean[][] getFleet()
         {
-            return fleet;
+            return fleet.clone();
         }
 
         public boolean[][] getSea()
         {
-            return sea;
+            return sea.clone();
         }
 
 

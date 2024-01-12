@@ -56,14 +56,12 @@ public class battleshipAI
             if(first == 0)
             {
                 player1.multTurnTake(player2);
-                player2.checkShips(player1.getSea());
                 unfinishedGame = checkIfGameUnfinished(player2.getShipsLeft());
                 first = 1;
             }
             else
             {
                 player2.multTurnTake(player1);
-                player1.checkShips(player1.getSea());
                 unfinishedGame = checkIfGameUnfinished(player1.getShipsLeft());
                 first = 0;
             }
@@ -111,15 +109,21 @@ public class battleshipAI
     //inverts a grid
     public static boolean[][] invertGrid(boolean[][] grid)
     {
+        boolean[][] copy = new boolean[10][10];
+        for(int y = 0; y < grid.length; y++)
+        {
+            copy[y] = grid[y].clone();
+        }
+
         for(int x = 0; x < grid.length; x++)
         {
             for(int y = 0; y < grid[x].length; y++)
             {
-                grid[x][y] = !grid[x][y];
+                copy[x][y] = !grid[x][y];
             }
         }
 
-        return grid;
+        return copy;
     }
 
 
@@ -727,6 +731,7 @@ public class battleshipAI
                 {
                     if(grid[i][y])
                     {
+
                         return false;
                     }
                 }
@@ -1277,6 +1282,7 @@ public class battleshipAI
             if(other.getFleet()[x][y])
             {
                 System.out.printf("HIT!\n");
+                other.checkShips(sea);
             }
             else
             {
@@ -2218,6 +2224,7 @@ public class battleshipAI
             }
             if(sunk)
                 spdb = false;
+            
         }
 
 
